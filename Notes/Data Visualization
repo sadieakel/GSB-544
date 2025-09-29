@@ -1,0 +1,36 @@
+---
+title: "Data Visualization"
+format: html
+---
+
+```{python}
+import pandas as pd
+from palmerpenguins import load_penguins
+from plotnine import ggplot, geom_point, aes, geom_boxplot
+```
+
+```{python}
+penguins = load_penguins()
+
+(ggplot(penguins) +
+    aes(x = "species", y = "bill_length_mm", fill = "species") + 
+    geom_boxplot()
+)
+```
+
+Same thing as below: 
+```{python}
+(ggplot(penguins, aes(x = "species", y = "bill_length_mm", fill = "species"))
++ geom_boxplot()
+)
+```
+
+Changing the theme: 
+```{python}
+from plotnine import theme_classic
+(ggplot(penguins, aes(x = "species", y = "bill_length_mm", fill = "species"))
++ geom_boxplot()
++ theme_classic()
+)
+```
+

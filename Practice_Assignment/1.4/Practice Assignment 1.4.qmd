@@ -1,0 +1,46 @@
+---
+title: "Practice Assignment 1.4"
+format: 
+    html: 
+        embed-resources: true
+---
+
+## 1. Filter the data to include passengers only. Calculate the joint distribution (cross-tab) between a passenger's class and where they embarked. 
+
+```{python}
+import numpy as np
+import pandas as pd 
+#hi there
+# hello?
+```
+
+```{python}
+data_dir = "https://dlsun.github.io/pods/data/"
+df_titanic = pd.read_csv(data_dir + "titanic.csv")
+```
+
+```{python}
+pd.crosstab(df_titanic["class"], df_titanic["embarked"], normalize=True)
+```
+
+## 2. Using the joint distribution that calculated above, calculate the following:
+
+* the conditional distribution of their class given where they embarked
+* the conditional distribution of where they embarked given their class
+
+Conditional distribution of class given where they embarked: 
+```{python}
+#hi
+```
+
+Use the conditional distributions that you calculate to answer the following quesitons:
+
+* What proportion of 3rd class passengers embarked at Southampton?
+* What proportion of Southampton passengers were in 3rd class?
+
+```{python}
+
+```
+
+## 3. Make a visualization showing the distribution of a passenger's class, given where they embarked.
+

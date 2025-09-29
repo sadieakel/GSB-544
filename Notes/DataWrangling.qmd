@@ -1,0 +1,187 @@
+---
+title: "Untitled"
+format: html
+---
+
+```{python}
+import numpy as np
+import pandas as pd 
+```
+
+TIDY DATA: data is tidy if: 
+1. every column is a variable 
+2. every row is an observation 
+3. every cell is a single value 
+
+```{python}
+data_dir = "https://dlsun.github.io/pods/data/"
+df_titanic = pd.read_csv(data_dir + "titanic.csv")
+```
+
+```{python}
+df_titanic
+```
+
+This data is already pretty tidy, the only thing that could be improved is by potentially splitting up the names between first and last. Could potentially help with grouping by family etc. if you wanted to do analysis on that. But tidyness is based on context a little bit too. 
+
+### Selecting columns/variables: 
+```{python}
+df_titanic.loc[:,"age"] #this is saying that we want all the rows and only the age column 
+```
+
+```{python}
+df_titanic["age"] #returns all rows by default 
+```
+
+```{python}
+# Method 1
+df_titanic.loc[:, ["age", "fare"]].head()
+
+# Method 2
+df_titanic[["age", "fare"]].head()
+#double brackets bc you ned to think about the fact that you are giving it one list of columns to select. there is one input for this type of selection. 
+```
+
+IMPORTANT DISTINCTION: 
+
+```{python}
+df_titanic["age"]
+#this produces a single vector with a certain length. 
+```
+
+```{python}
+df_titanic[["age"]]
+#this produces a pandas dataframe with one column. Putting the double brackets maintains the shape/data frame type 
+```
+
+
+```{python}
+df_titanic.iloc[3]
+#produces info for the fourth row (third index)  
+```
+
+```{python}
+df_titanic.iloc[[3]]
+#shows the difference between giving it a single number versus a list
+```
+
+```{python}
+df_titanic.iloc[3:9]
+#note python is inclusive of the first one and exclusive of the last one. returns multiple rows 
+```
+
+### More boolean masking
+Pretty similar as filtering in R 
+
+What we did previously: 
+```{python}
+df_titanic["age"] > 30
+#returns either true or false
+```
+
+```{python}
+df_titanic[df_titanic["age"] > 30]
+#returns the rows that are true 
+```
+
+can combine two things using and or or: 
+```{python}
+df_titanic[(df_titanic["age"] > 30) & (df_titanic["gender"] == "female")]
+
+# & is and | is or 
+```
+
+
+```{python}
+men_20_survived=(df_titanic["age"]<20) & (df_titanic["survived"]==1) & (df_titanic["gender"]=="male")
+df_titanic[men_20_survived]
+```
+
+### Arranging Rows: 
+```{python}
+df_titanic.sort_values(by = ["age"], ascending=False)
+```
+
+
+### Mutating columns: 
+
+Changing current columns: 
+```{python}
+df_titanic["age"] = df_titanic["age"] / 10
+df_titanic["fare"] = np.log(df_titanic["fare"])
+```
+
+Creating new columns: 
+```{python}
+df_titanic["nonsense"] = df_titanic["fare"] / df_titanic["age"]
+```
+
+Using pd.cut to create bins 
+```{python}
+df_titanic["age_cat"] = pd.cut(df_titanic["age"],
+bins = [0, 18, 100], #18 is considered an adult 
+labels = ["child", "adult"])
+#creates categories based on age and each row will belong to one of the columns based on bins. SUPER COOL!!!
+```
+
+```{python}
+df_titanic["age_cat"]
+```
+
+### Transforming categorical variables 
+
+```{python}
+df_titanic["female"] = 1 * (df_titanic["gender"] == "female")
+#note df_titanic["gender"]=="female" returns 1 if data=female and 0 if data=male 
+```
+
+
+```{python}
+pd.get_dummies(df_titanic["embarked"])
+```
+
+Adding categorical variable: 
+```{python}
+df_titanic["type"] = df_titanic["class"].map({
+    "1st": "passenger",
+    "2nd": "passenger",
+    "3rd": "passenger",
+    "victualling crew": "crew",
+    "engineering crew": "crew",
+    "deck crew": "crew"
+})
+
+df_titanic
+```
+
+### summarizing using group by: 
+```{python}
+df_titanic[["age", "survived"]].groupby("survived").mean()
+```
+
+
+### frequency: GONNA BE IMPORTANT 
+```{python}
+df_titanic["class"].value_counts()
+#gives the raw count of each occurance 
+```
+
+```{python}
+df_titanic["class"].value_counts(normalize=True)
+#this is the percentage 
+```
+
+
+```{python}
+pd.crosstab(df_titanic["survived"], df_titanic["gender"])
+```
+
+
+```{python}
+pd.crosstab(df_titanic["survived"], df_titanic["gender"], normalize=True)
+```
+
+
+```{python}
+
+```

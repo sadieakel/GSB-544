@@ -1,0 +1,223 @@
+---
+title: "Lab_1"
+author: "Sadie Akel"
+format: 
+    html: 
+        embed-resources: true
+        theme: cosmo 
+---
+
+```{python}
+import plotnine as p9
+import pandas as pd
+from plotnine import *
+```
+
+## Task 1:
+
+### 1)
+
+The aethetics being used are listed below:
+
+1. X axis: the variable income (per person) is numeric and is mapped to the x-axis.
+2. Y axis: the variable life expectancy (years) is numeric and is mapped to the y-axis.
+3. Fill/colors: world regions (categorical with 4 categories) is the color for this graph, where each category has a distinct color.
+4. Size of dots: the variable country population (numeric) corresponds to the size of the dots on the graph, the larger the population of the country the larger its corresponding dot is.
+
+### 2)
+
+```{python}
+df1=pd.read_csv("~/Desktop/GSB 544/Lab_1/Data/q1data.csv", sep=',')
+```
+
+### 3)
+
+```{python}
+(ggplot(df1, aes(x = "income", y = "life_exp", color = "four_regions"))
++ geom_point(aes(size="population"), alpha=0.75) 
++ scale_size(range=(3,15))
++ theme_bw()
++ annotate(
+    geom="text",
+    x=55000, 
+    y=65,
+    label="2010",
+    size=100,
+    color="lightgrey",
+    alpha=0.4
+)
++ labs(
+    x="Income", 
+    y="Life Expectancy", 
+)
+)
+
+```
+
+### 4)
+
+Turning income and population into categorical variables to be able to display them using a boxplot:
+
+```{python}
+df1.income_factor=0
+df1.population_factor=0
+```
+
+income_factor will be false if data is below average income, and be true if data is above average income:
+
+```{python}
+df1.income.mean()
+df1["income_factor"]=df1.income>18504
+```
+
+population_factor will be false if data is below average population, and be true if data is above average population:
+
+```{python}
+df1.population.mean()
+df1["population_factor"]=df1.population>35463800
+```
+
+```{python}
+(ggplot(df1, aes(x = "income_factor", y = "life_exp", fill = "population_factor")) 
++ geom_boxplot()
++ facet_wrap("four_regions")
+)
+```
+
+While you can create a boxplot to visualize this data, it is much more limited in being able to tell the same story as the geom_point plot above. First, to be able to include all the variables in the boxplot we had to make 2/3 of the numeric variables into categorical variables. Here, this leads to a loss of information that the original variable displayed as now we can only see the life expectancy for above/below average income and population instead of viewing an overall trend. However, in certain situations this could be positive, as in the boxplot it is easier to compare certain categories to one another in terms of differences in life expectancy and come to faster visual conclusions. If we are looking to compare a certain population/income group to others this could be a good visualization.
+
+## Task 2:
+
+### 1)
+
+The aethetics being used are listed below:
+
+1. X axis: the variable exports (% of GDP) is a numeric variable and it is mapped to the x-axis.
+2. Y axis: the variable imports (% of GDP) is a numeric variable and it is mapped to the y-axis.
+3. Fill/colors: world regions (categorical with 4 categories) is the color for this graph, where each category has a distinct color.
+4. Size of dots: the variable energy use (numeric) corresponds to the size of the dots on the graph, the larger the energy use of the country the larger its corresponding dot is.
+
+### 2)
+
+```{python}
+df2=pd.read_csv("~/Desktop/GSB 544/Lab_1/Data/q2data.csv", sep=',')
+```
+
+```{python}
+df2.loc[13,"energy"]="12400"
+df2.loc[46,"energy"]="18800"
+df2.loc[151,"energy"]="19300"
+df2.loc[194,"energy"]="11200"
+```
+
+```{python}
+df2["energy"]=df2["energy"].astype(float)
+```
+
+### 3)
+
+```{python}
+(ggplot(df2, aes(x = "exports", y = "imports", color = "four_regions"))
++ geom_point(aes(size="energy"), alpha=0.75) 
++ scale_size(range=(1,15))
++ theme_bw()
++ annotate(
+    geom="text",
+    x=80, 
+    y=75,
+    label="1997",
+    size=100,
+    color="lightgrey",
+    alpha=0.4
+)
++ labs(
+    x="Exports (% of GPD)", 
+    y="Imports (% of GDP)", 
+)
+)
+```
+
+### 4)
+```{python}
+(ggplot(df2,
+aes(
+  x = "exports",
+  y = "imports",
+  color = "energy",
+  group = "energy"
+))
++ geom_point()
++ geom_line()
++ facet_wrap("four_regions")
+)
+```
+
+This visual does a good job of capturing the general trend between imports and exports and makes the energy use scale viewable. In addition, it is a good visual for comparing different regions directly, as we can easily decipher and compare between different regions. However, the line part of this geometry adds confusion, and it would be better left as a scatterplot. 
+
+## Task 3:
+
+### 1)
+The aethetics being used are listed below:
+
+1.  X axis: the variable individuals using the internet is numeric and is mapped to the x-axis.
+2.  Y axis: the variable GDP/capita is numeric and is mapped to the y-axis.
+3.  Fill/colors: world regions (categorical with 4 categories) is the color for this graph, where each category has a distinct color.
+4.  Size of dots: the variable income (numeric) corresponds to the size of the dots on the graph, the larger the income of the country the larger its corresponding dot is.
+
+### 2)
+
+```{python}
+df3=pd.read_csv("~/Desktop/GSB 544/Lab_1/Data/q3data.csv", sep=',')
+```
+
+### 3)
+
+```{python}
+(ggplot(df3, aes(x = "internet_users", y = "gdp", color = "four_regions"))
++ geom_point(aes(size="income"), alpha=0.75) 
++ scale_size(range=(1,15))
++ theme_bw()
++ labs(
+    x="Individuals Using the Internet", 
+    y="GDP/capita", 
+)
++ annotate(
+    geom="text",
+    x=40, 
+    y=75000,
+    label="2001",
+    size=100,
+    color="lightgrey",
+    alpha=0.4
+)
+)
+```
+
+### 4)
+
+Turning internet_users into a categorical variable to be able to display it using a line graph:
+```{python}
+df3.internet_users.mean()+df3.internet_users.std()
+```
+
+Internet factor is new categorical variable that is true if the the data is a high level of internet_users (1 standard deviation above the mean), and false otherwise. 
+```{python}
+df3.internet_users.std()
+df3["internet_factor"]=df3.internet_users>32
+```
+
+```{python}
+(ggplot(df3,
+aes(
+  x = "internet_factor",
+  y = "gdp",
+  color = "income",
+  group = "income"
+))
++ geom_point()
++ geom_line()
++ facet_wrap("four_regions")
+)
+```
+
+I think this graph does a good job of displaying the differences between high internet use and lower/standard internet use, and it makes it easy to compare the differences in relationship between different regions. I also think this graph displays the scale of income pretty well, and makes differences in income easily viewable. This is good because in the previous graph, there are a lot of data points close together that make it hard to decipher differences in income and region. However, this visual is limited due to the change of numeric variable to categorical variable, and it only provides a single snapshot into the larger relationship between these variables. 

@@ -1,0 +1,167 @@
+---
+title: "Class 1 Machine Learning Notes"
+format: 
+    html:
+        embed-resources: true
+---
+## Intro to variables etc. 
+Types of variables: 
+```{python}
+type(False)
+#type(2) # by default, python treats whole numbers as integers
+#type(2.0)  # to force it not to be an integer, add a .0
+#type("Hello, programmer!")\
+```
+
+What happens when we try and add different types of variables? 
+```{python}
+True+False
+#True+"help"
+```
+
+Second example, cannot mix strings and integers in addition
+
+```{python}
+type(2 + 3.14159) # add integer 2 and pi
+#type(2 + True) # add integer 2 and TRUE
+#type(True + False) # add TRUE and FALSE
+```
+
+How can we fix this issue? 
+```{python}
+x = 3
+y = "3.14159"
+#x + y #x+y wont work because it is a string plus an integer
+x + float(y)
+```
+
+Answer: use commands such as float() to make strings into numbers 
+
+Order of operations: 
+General rule of thumb is to use more parenthesis than necessary 
+
+```{python}
+14 // 3 #this is "integer division", rounds to integer
+14 % 3 #modular division: remainder of division of 14 by 3 
+```
+
+## Data Structures
+
+Arrays/lists: 
+```{python}
+my_nums = [1,2,3,4,5]
+my_nums.sort()
+my_nums
+```
+
+Note: you can only work with commands/functions that work for that specific data structure. You cannot use things like my_nums.round(), because that is not a function meant for an array 
+
+Note: you can put many different variable types in a list 
+
+INDEXING: 
+- indexing starts at index zero 
+- IMPORTANT: when you return something using an index, you return a list of length one and not the actual inputted variable type
+
+Ex:
+```{python}
+x = ["a", 3, True]
+x[0] #this returns a list of one element 
+```
+
+TO FIX: 
+```{python}
+x.pop(0) #this returns the actual variable 
+```
+
+Numpy arrays: 
+
+```{python}
+import numpy as np
+from numpy import array
+
+digits_pi = array([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5])
+
+# Access individual entries
+digits_pi[1]
+
+# Print out the vector
+digits_pi
+```
+
+Boolean Masking: 
+```{python}
+# Define a character vector
+weekdays = np.array(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
+weekend = np.array(["Sunday", "Saturday"])
+
+# Create logical vectors manually
+#relax_days = array([True, False, False, False, False, False, True])
+
+# Create logical vectors automatically
+from numpy import isin     # get a special function for arrays
+relax_days = isin(weekdays, weekend) #returns true if weekday is in weekend. returns false otherwise. Goes based on index. 
+
+relax_days
+
+# Using logical vectors to index the character vector
+weekdays[relax_days] 
+
+# Using ~ to reverse the True and False
+weekdays[~relax_days] 
+```
+
+Numpy Matrices: 
+```{python}
+from numpy import matrix
+
+matrix([[1,2,3], [4,5,6]])
+```
+
+
+```{python}
+my_mat = np.matrix([[1,2,3,4], [4,5,6,7], [7,8,9,10]])
+
+my_mat
+```
+
+
+```{python}
+my_mat[2,0] = 500 #replaces row 2 column 0 with the value 500. note that rows and columns both start at 0. 
+
+my_mat
+```
+
+Pandas Dataframes: 
+```{python}
+import pandas as pd
+
+dat = pd.read_csv("https://gist.githubusercontent.com/slopp/ce3b90b9168f2f921784de84fa445651/raw/4ecf3041f0ed4913e7c230758733948bc561f434/penguins.csv")
+
+dat
+
+dat.info()
+```
+
+
+```{python}
+dat.body_mass_g
+```
+
+```{python}
+dat['body_mass_g']
+```
+
+Now, we can practice different things with data frames
+```{python}
+## using methods
+dat.body_mass_g.mean()
+
+## editing elements
+dat.body_mass_g[0] = 10000000
+dat.body_mass_g
+
+## boolean masking
+big_penguins = dat.body_mass_g > 6000
+dat.loc[big_penguins]
+```
+
