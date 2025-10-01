@@ -1,5 +1,86 @@
 ---
 title: "Practice Assignment 2.1"
-format: html
+format: 
+    html:
+        embed-resources: true
 ---
+
+## 1. Filter the data to include passengers only. Calculate the joint distribution (cross-tab) between a passenger's class and where they embarked. 
+
+```{python}
+import numpy as np
+import pandas as pd 
+```
+
+```{python}
+data_dir = "https://dlsun.github.io/pods/data/"
+df_titanic = pd.read_csv(data_dir + "titanic.csv")
+```
+
+```{python}
+total_vals=pd.crosstab(df_titanic["class"], df_titanic["embarked"], normalize=True)
+total_vals
+```
+
+```{python}
+total_vals_2=pd.crosstab(df_titanic["embarked"], df_titanic["class"], normalize=True)
+```
+
+## 2. Using the joint distribution that calculated above, calculate the following:
+
+* the conditional distribution of their class given where they embarked:
+```{python}
+cond_prob_embark=total_vals
+cond_prob_embark["B"]=total_vals["B"]/sum(total_vals["B"])
+cond_prob_embark["C"]=total_vals["C"]/sum(total_vals["C"])
+cond_prob_embark["Q"]=total_vals["Q"]/sum(total_vals["Q"])
+cond_prob_embark["S"]=total_vals["S"]/sum(total_vals["S"])
+cond_prob_embark
+```
+
+* the conditional distribution of where they embarked given their class
+```{python}
+cond_prob_class=total_vals_2
+cond_prob_class["1st"]=total_vals_2["1st"]/sum(total_vals_2["1st"])
+cond_prob_class["2nd"]=total_vals_2["2nd"]/sum(total_vals_2["2nd"])
+cond_prob_class["3rd"]=total_vals_2["3rd"]/sum(total_vals_2["3rd"])
+cond_prob_class["deck crew"]=total_vals_2["deck crew"]/sum(total_vals_2["deck crew"])
+cond_prob_class["engineering crew"]=total_vals_2["engineering crew"]/sum(total_vals_2["engineering crew"])
+cond_prob_class["victualling crew"]=total_vals_2["victualling crew"]/sum(total_vals_2["victualling crew"])
+cond_prob_class["restaurant staff"]=total_vals_2["restaurant staff"]/sum(total_vals_2["restaurant staff"])
+cond_prob_class
+```
+
+Use the conditional distributions that you calculate to answer the following quesitons:
+
+* What proportion of 3rd class passengers embarked at Southampton?
+```{python}
+cond_prob_class.loc["S","3rd"]
+```
+
+69.68% of 3rd class passengers embared at Southhampton. 
+
+* What proportion of Southampton passengers were in 3rd class?
+```{python}
+cond_prob_embark.loc["3rd","S"]
+```
+
+30.57% of Southampton passengers were in 3rd class. 
+
+## 3. Make a visualization showing the distribution of a passenger's class, given where they embarked.
+```{python}
+import plotnine as p9
+```
+
+```{python}
+(p9.ggplot(df_titanic,
+p9.aes(
+  x = "embarked",
+  fill = "class"
+))
++ p9.geom_bar(position = "dodge")
+)
+```
+
+The full visualization gives a good broader picture of how the embarking locations compare to each other in terms of passengers boarded, where in the conditional probability tables it is hard to get this bigger picture. However, the tables are preffered to the visualization in terms of being able to get specific/exact proportions easily. 
 
