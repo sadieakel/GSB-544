@@ -10,8 +10,6 @@ format:
 ```{python}
 import numpy as np
 import pandas as pd 
-#hi there
-# hello? hi
 ```
 
 ```{python}
@@ -20,7 +18,8 @@ df_titanic = pd.read_csv(data_dir + "titanic.csv")
 ```
 
 ```{python}
-pd.crosstab(df_titanic["class"], df_titanic["embarked"], normalize=True)
+total_vals=pd.crosstab(df_titanic["class"], df_titanic["embarked"], normalize=True)
+total_vals
 ```
 
 ## 2. Using the joint distribution that calculated above, calculate the following:
@@ -30,17 +29,77 @@ pd.crosstab(df_titanic["class"], df_titanic["embarked"], normalize=True)
 
 Conditional distribution of class given where they embarked: 
 ```{python}
-#hi
+df_titanic_B = df_titanic[df_titanic["embarked"]=="B"]
+df_titanic_C = df_titanic[df_titanic["embarked"]=="C"]
+df_titanic_Q = df_titanic[df_titanic["embarked"]=="Q"]
+df_titanic_S = df_titanic[df_titanic["embarked"]=="S"]
+```
+
+```{python}
+B_cond=df_titanic_B["class"].value_counts(normalize=True)
+C_cond=df_titanic_C["class"].value_counts(normalize=True)
+Q_cond=df_titanic_Q["class"].value_counts(normalize=True)
+S_cond=df_titanic_S["class"].value_counts(normalize=True)
+```
+
+```{python}
+B_cond
+```
+
+Conditional distribution of embark location given class: 
+```{python}
+df_titanic_1=df_titanic[df_titanic["class"]=="1st"]
+df_titanic_2=df_titanic[df_titanic["class"]=="2nd"]
+df_titanic_3=df_titanic[df_titanic["class"]=="3rd"]
+df_titanic_victualling=df_titanic[df_titanic["class"]=="victualling crew"]
+df_titanic_engineering=df_titanic[df_titanic["class"]=="engineering crew"]
+df_titanic_deck=df_titanic[df_titanic["class"]=="deck crew"]
+df_titanic_rest=df_titanic[df_titanic["class"]=="restaurant staff"]
+```
+
+```{python}
+first=df_titanic_1["embarked"].value_counts(normalize=True)
+second=df_titanic_2["embarked"].value_counts(normalize=True)
+third=df_titanic_3["embarked"].value_counts(normalize=True)
+victualling=df_titanic_victualling["embarked"].value_counts(normalize=True)
+engineer=df_titanic_engineering["embarked"].value_counts(normalize=True)
+deck=df_titanic_deck["embarked"].value_counts(normalize=True)
+restaurant=df_titanic_rest["embarked"].value_counts(normalize=True)
+```
+
+```{python}
+first
 ```
 
 Use the conditional distributions that you calculate to answer the following quesitons:
 
 * What proportion of 3rd class passengers embarked at Southampton?
-* What proportion of Southampton passengers were in 3rd class?
-
 ```{python}
-
+third["S"]
 ```
 
-## 3. Make a visualization showing the distribution of a passenger's class, given where they embarked.
+69.68% of 3rd class passengers embared at Southhampton. 
 
+* What proportion of Southampton passengers were in 3rd class?
+```{python}
+S_cond["3rd"]
+```
+
+30.57% of Southhampton passengers were in 3rd class. 
+
+## 3. Make a visualization showing the distribution of a passenger's class, given where they embarked.
+```{python}
+import plotnine as p9
+```
+
+```{python}
+(p9.ggplot(df_titanic,
+p9.aes(
+  x = "embarked",
+  fill = "class"
+))
++ p9.geom_bar(position = "dodge")
+)
+```
+
+The full visualization gives a good broader picture of how the embarking locations compare to each other in terms of passengers boarded, where in the conditional probability tables it is hard to get this bigger picture. However, the tables are preffered to the visualization in terms of being able to get specific/exact proportions easily. 
