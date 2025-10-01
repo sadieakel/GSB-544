@@ -2202,15 +2202,15 @@ vertical-align: -.125em;
 
 <section id="filter-the-data-to-include-passengers-only.-calculate-the-joint-distribution-cross-tab-between-a-passengers-class-and-where-they-embarked." class="level2">
 <h2 class="anchored" data-anchor-id="filter-the-data-to-include-passengers-only.-calculate-the-joint-distribution-cross-tab-between-a-passengers-class-and-where-they-embarked.">1. Filter the data to include passengers only. Calculate the joint distribution (cross-tab) between a passenger’s class and where they embarked.</h2>
-<div id="a6a4d07b" class="cell" data-execution_count="1">
+<div id="c60a1198" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="d8567dd3" class="cell" data-execution_count="2">
+<div id="b9ceca68" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data_dir <span class="op">=</span> <span class="st">&quot;https://dlsun.github.io/pods/data/&quot;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_titanic <span class="op">=</span> pd.read_csv(data_dir <span class="op">+</span> <span class="st">&quot;titanic.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="ba0e8bef" class="cell" data-execution_count="3">
+<div id="42ade1d4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>total_vals<span class="op">=</span>pd.crosstab(df_titanic[<span class="st">&quot;class&quot;</span>], df_titanic[<span class="st">&quot;embarked&quot;</span>], normalize<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>total_vals</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -2290,7 +2290,7 @@ vertical-align: -.125em;
 </div>
 </div>
 </div>
-<div id="39376c93" class="cell" data-execution_count="4">
+<div id="5ec6f51f" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>total_vals_2<span class="op">=</span>pd.crosstab(df_titanic[<span class="st">&quot;embarked&quot;</span>], df_titanic[<span class="st">&quot;class&quot;</span>], normalize<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -2299,7 +2299,7 @@ vertical-align: -.125em;
 <ul>
 <li>the conditional distribution of their class given where they embarked:</li>
 </ul>
-<div id="ce4a0033" class="cell" data-execution_count="5">
+<div id="0a1718dc" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cond_prob_embark<span class="op">=</span>total_vals</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cond_prob_embark[<span class="st">&quot;B&quot;</span>]<span class="op">=</span>total_vals[<span class="st">&quot;B&quot;</span>]<span class="op">/</span><span class="bu">sum</span>(total_vals[<span class="st">&quot;B&quot;</span>])</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>cond_prob_embark[<span class="st">&quot;C&quot;</span>]<span class="op">=</span>total_vals[<span class="st">&quot;C&quot;</span>]<span class="op">/</span><span class="bu">sum</span>(total_vals[<span class="st">&quot;C&quot;</span>])</span>
@@ -2386,7 +2386,7 @@ vertical-align: -.125em;
 <ul>
 <li>the conditional distribution of where they embarked given their class</li>
 </ul>
-<div id="0f33adbd" class="cell" data-execution_count="6">
+<div id="636e11aa" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cond_prob_class<span class="op">=</span>total_vals_2</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cond_prob_class[<span class="st">&quot;1st&quot;</span>]<span class="op">=</span>total_vals_2[<span class="st">&quot;1st&quot;</span>]<span class="op">/</span><span class="bu">sum</span>(total_vals_2[<span class="st">&quot;1st&quot;</span>])</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>cond_prob_class[<span class="st">&quot;2nd&quot;</span>]<span class="op">=</span>total_vals_2[<span class="st">&quot;2nd&quot;</span>]<span class="op">/</span><span class="bu">sum</span>(total_vals_2[<span class="st">&quot;2nd&quot;</span>])</span>
@@ -2474,7 +2474,7 @@ vertical-align: -.125em;
 <ul>
 <li>What proportion of 3rd class passengers embarked at Southampton?</li>
 </ul>
-<div id="051fa1ea" class="cell" data-execution_count="7">
+<div id="b1212c5b" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cond_prob_class.loc[<span class="st">&quot;S&quot;</span>,<span class="st">&quot;3rd&quot;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>np.float64(0.6967559943582511)</code></pre>
@@ -2484,7 +2484,7 @@ vertical-align: -.125em;
 <ul>
 <li>What proportion of Southampton passengers were in 3rd class?</li>
 </ul>
-<div id="fc0ea0ed" class="cell" data-execution_count="8">
+<div id="b937931d" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cond_prob_embark.loc[<span class="st">&quot;3rd&quot;</span>,<span class="st">&quot;S&quot;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>np.float64(0.30569306930693074)</code></pre>
@@ -2494,10 +2494,10 @@ vertical-align: -.125em;
 </section>
 <section id="make-a-visualization-showing-the-distribution-of-a-passengers-class-given-where-they-embarked." class="level2">
 <h2 class="anchored" data-anchor-id="make-a-visualization-showing-the-distribution-of-a-passengers-class-given-where-they-embarked.">3. Make a visualization showing the distribution of a passenger’s class, given where they embarked.</h2>
-<div id="17145459" class="cell" data-execution_count="9">
+<div id="83216f21" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotnine <span class="im">as</span> p9</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="901861b6" class="cell" data-execution_count="10">
+<div id="ceac185d" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(df_titanic,</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">&quot;embarked&quot;</span>,</span>
