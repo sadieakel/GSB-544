@@ -1,0 +1,173 @@
+---
+title: "Practice Assignment 2.2"
+format: 
+    html:
+        embed-resources: true
+---
+
+Intro
+In this PA, you will practice altering data frame objects in order to solve a riddle.
+
+Advice for troubleshooting your code
+Check results often
+If a chunk of code runs smoothly without giving you any error or warnings this does not necessarily mean it accomplished the desired task.
+
+It is a good habit to check the results of your code every time you finish a task.
+
+If you created or updated a data frame, make sure your edits did what you hoped. Use the Environment or the head() function to investigate your changes.
+
+Document your work
+In the text before the code chunk, make sure to briefly state what the point of the chunk is. This will remind later readers - which might be your future self! - what the desired output is.
+
+Use comments in the code to give quick explanations of the goals of complex steps.
+
+Two heads are better than one
+It can be hard to spot bugs in code that you yourself wrote.t (Have you ever sent a text message and not spotted an obvious typo? Same idea!)
+
+Work with people around you if you can - if something goes wrong, ask a friend to take a peek at your code and see if any glaring errors (like syntax error) pop out.
+
+Explain your code out loud
+The best way to troubleshoot a sneaky bug is to explain out loud each step of your code, and what you hoped to accomplish.
+
+If you are alone, try Rubber Duck Debugging!
+
+Google is your friend
+The whole of the internet is at your disposal! Use it early, use it often.
+
+Copy-paste the exact error message into Google. Chances are, somebody else had a similar problem and got a similar message.
+
+Include package names in your search terms. For example, "bar plot in plotnine with pandas data frame" is a better search than "bar plot in python".
+
+## Part One: Data import and cleaning
+This section will walk you through some steps to clean up today's dataset, so that you can use it more easily in Part Two.
+
+First, we declare our package dependencies and load the data.
+
+(Note that the data loading function read_csv will give you an outpouring of helpful information about the dataset. If you do not see the word "error", there is nothing to be concerned about.)
+
+```{python}
+import numpy as np
+import pandas as pd
+
+colleges = pd.read_csv("https://www.dropbox.com/s/bt5hvctdevhbq6j/colleges.csv?dl=1")
+colleges
+```
+
+The code chunks in this section will cause an error and/or do the desired task incorrectly. (Even the chunks that run without error are not correct!) You will need to find the mistake, and correct it, to complete the intended action.
+
+None of the text is incorrect, only the code - your goal is to make the code do exactly what the documentation claims it will.
+
+1. Narrow down the columns to variables of interest
+There are too many variables in this dataset. We don't need all of them. We will limit our dataset down to only:
+
+Name of the institution, City, State, and ZIP code of the institution The Admissions Rate The average SAT score The number of undergraduate students The in and out of state tuitions Whether the school is public or private The "REGION" variable.
+
+```{python}
+colleges_clean = colleges[['INSTNM', 'CITY', 'STABBR', 'ZIP', 'CONTROL', 'ADM_RATE', 'SAT_AVG', 'TUITIONFEE_IN', 'TUITIONFEE_OUT', 'UGDS', 'REGION']]
+```
+
+2. Remove observations that aren't needed
+Drop the schools that are "private for-profit" (category 3). We will not need these for the puzzle.
+
+```{python}
+colleges_clean = colleges_clean[(colleges_clean['CONTROL'] == 1) | (colleges_clean['CONTROL'] ==2)]
+```
+
+3. Adjust variable types: Numeric
+Some of the columns of the dataset were automatically understood by the computer to be categorical, due to missing data appearing like strings.
+
+Adjust the appropriate columns to be numeric.
+```{python}
+colleges_clean['TUITIONFEE_IN'] = colleges_clean['TUITIONFEE_IN'].astype('float')
+
+colleges_clean['TUITIONFEE_OUT'] = colleges_clean['TUITIONFEE_OUT'].astype('float')
+
+colleges_clean['SAT_AVG'] = colleges_clean['SAT_AVG'].astype('float')
+
+colleges_clean['ADM_RATE'] = colleges_clean['ADM_RATE'].astype('float')
+```
+
+4. Adjust variable types: Categorical
+Similarly, columns of the dataset that are not numbers are automatically understood by the computer to be strings.
+
+We know, however, that some variables are truly categorical, in that there are only a few categories (or "levels") that can be values of the column.
+
+Adjust the appropriate columns to be understood as categorical.
+```{python}
+colleges_clean['CONTROL']=colleges_clean['CONTROL'].astype('str')
+colleges_clean['REGION']=colleges_clean['REGION'].astype('str')
+```
+
+5. Calculate new variables
+Create a new variable called TUITION_DIFF which contains the difference between in and out of state costs.
+```{python}
+colleges_clean['TUITION_DIFF'] = colleges_clean['TUITIONFEE_OUT'] - colleges_clean['TUITIONFEE_IN']
+```
+
+6. Deal with missing data
+Drop all the rows with missing data.
+
+(It is often a terrible idea to simply drop all rows with any missing data! Usually, even if some of the information is missing, we don't want to throw out the entire row. In this example, however, we'll be lazy.)
+```{python}
+colleges_clean = colleges_clean.dropna()
+```
+
+
+## Part Two: Identify the mystery college
+Wow! Your best friend Ephelia has been accepted to the college of her dreams! Unfortunately, Ephelia is a very mysterious person, and she won't tell you directly which college this is. You'll have to use her clues to figure out which school is her dream school.
+
+Clues:
+
+This college is located in Region 1.
+```{python}
+e_college=colleges_clean[colleges_clean["REGION"]=="1"]
+e_college
+```
+
+This college's admission rate is in the first quartile for the region.
+```{python}
+e_college["ADM_RATE"].describe()
+```
+
+```{python}
+e_college=e_college[e_college["ADM_RATE"]<=0.478900]
+```
+
+This college charges the same for in- and out-of-state tuition.
+```{python}
+e_college=e_college[e_college["TUITION_DIFF"]==0]
+```
+
+The average SAT score of this college is an odd number.
+```{python}
+e_college=e_college[e_college["SAT_AVG"]%2==1]
+e_college
+```
+
+This college is NOT in New Hampshire or in the city of Boston.
+```{python}
+e_college=e_college[(e_college["CITY"]!="New Hampshire") & (e_college["CITY"]!="Boston")]
+e_college
+```
+
+More than 3,000 people apply to this college every year. (Hint: Make a new variable to compute how many people apply. Assume the size of an incoming class is 1/4 of the total undergraduate population, and remember that not everyone who applies is admitted.)
+```{python}
+e_college["FRESHMEN"]=e_college["UGDS"]/4
+```
+
+```{python}
+e_college["APPLY"]=e_college["FRESHMEN"]/e_college["ADM_RATE"]
+```
+
+```{python}
+e_college=e_college[e_college["APPLY"]>3000]
+e_college
+```
+
+Ephelia is not going to an Ivy League school.
+* Ephelia is not going to Harvard or Dartmouth 
+
+Of the two options remaining at this step, Ephelia will attend the cheaper one.
+* Williams and Amherst are remaining, Williams is cheaper! 
+
+### SHE IS GOING TO WILLIAMS!!!!! 
