@@ -1,0 +1,23 @@
+---
+title: "Lab 2"
+format: html
+---
+## 0: Import of Data, Calling Packages
+```{python}
+import pandas as pd
+```
+
+```{python}
+avocados = pd.read_csv("~/Desktop/GSB 544/Labs/Lab_2/Data/avocado-updated-2020.csv", sep=',')
+```
+
+## 1: Describing the Dataset
+```{python}
+avocados.info()
+```
+
+The avocados dataframe contains 12 variables containing information about ** STUFF AND THINGS!!! ADD DESCRIPTION HERE!! ESPECIALLY ABOUT THE 4046, and other number variables ** 
+
+https://www.kaggle.com/datasets/timmate/avocado-prices-2020
+
+## 2: Data Cleaning 
