@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="Lab_2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="Lab_2_files/libs/clipboard/clipboard.min.js"></script>
 <script src="Lab_2_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="Lab_2_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="Lab_2_files/libs/quarto-html/popper.min.js"></script>
@@ -69,6 +69,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="Lab_2_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Lab_2_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="Lab_2_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -100,16 +103,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="import-of-data-calling-packages" class="level2">
 <h2 class="anchored" data-anchor-id="import-of-data-calling-packages">0: Import of Data, Calling Packages</h2>
-<div id="8474e3e6" class="cell" data-execution_count="1">
+<div id="55df65f3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="08c06b4c" class="cell" data-execution_count="2">
+<div id="fd175118" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>avocados <span class="op">=</span> pd.read_csv(<span class="st">"~/Desktop/GSB 544/Labs/Lab_2/Data/avocado-updated-2020.csv"</span>, sep<span class="op">=</span><span class="st">','</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="describing-the-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="describing-the-dataset">1: Describing the Dataset</h2>
-<div id="d90a3dfc" class="cell" data-execution_count="3">
+<div id="aea0ad7e" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>avocados.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
@@ -134,8 +137,882 @@ dtypes: float64(9), int64(1), object(3)
 memory usage: 3.3+ MB</code></pre>
 </div>
 </div>
-<p>The avocados dataframe contains 12 variables containing information about ** STUFF AND THINGS!!! ADD DESCRIPTION HERE!! ESPECIALLY ABOUT THE 4046, and other number variables **</p>
-<p>https://www.kaggle.com/datasets/timmate/avocado-prices-2020</p>
+<p>The avocados dataframe contains 13 variables containing information about avocado prices, total volume, and sales quantities for avocados between 2015 and 2020. Information about sales quantity of the avocado includes the type (conventional vs.&nbsp;organic), the geography (the region/area where avocados are being considered), and data on the size/sell type of avocados. This includes small/medium avocados, large avocados, xl avocados, and bags of avocados of each type.</p>
+</section>
+<section id="data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning">2: Data Cleaning</h2>
+<div id="a5147846" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>avocado_cleaned<span class="op">=</span>avocados[[<span class="st">"date"</span>, <span class="st">"average_price"</span>, <span class="st">"total_volume"</span>, <span class="st">"total_bags"</span>, <span class="st">"small_bags"</span>, <span class="st">"large_bags"</span>, <span class="st">"xlarge_bags"</span>, <span class="st">"type"</span>, <span class="st">"year"</span>,<span class="st">"geography"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="bf50abbc" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>avocado_cleaned[<span class="st">"sm"</span>]<span class="op">=</span>avocados[<span class="st">"4046"</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>avocado_cleaned[<span class="st">"large"</span>]<span class="op">=</span>avocados[<span class="st">"4225"</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>avocado_cleaned[<span class="st">"xl"</span>]<span class="op">=</span>avocados[<span class="st">"4770"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/42/_r31h9t105bfw6ff7pgp8_7r0000gn/T/ipykernel_7908/1286719532.py:1: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+/var/folders/42/_r31h9t105bfw6ff7pgp8_7r0000gn/T/ipykernel_7908/1286719532.py:2: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy</code></pre>
+</div>
+</div>
+<div id="3e8e3490" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#avocados["geography"].value_counts()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0ddec118" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> isin </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>states<span class="op">=</span>[<span class="st">"California"</span>, <span class="st">"South Carolina"</span>, <span class="st">"New York"</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>us<span class="op">=</span>[<span class="st">"Total U.S."</span>]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>regions<span class="op">=</span>[<span class="st">"Midsouth"</span>, <span class="st">"Northeast"</span>,<span class="st">"Southeast"</span>, <span class="st">"South Central"</span>, <span class="st">"West"</span>, <span class="st">"West Tex/New Mexico"</span>, <span class="st">"Northern New England"</span>, <span class="st">"Great Lakes"</span>, <span class="st">"Plains"</span>]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>avocado_cleaned[<span class="st">"geo_type"</span>] <span class="op">=</span> <span class="st">"city"</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>is_state <span class="op">=</span> isin(avocado_cleaned[<span class="st">"geography"</span>], states)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>is_us <span class="op">=</span> isin(avocado_cleaned[<span class="st">"geography"</span>], us)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>is_region <span class="op">=</span> isin(avocado_cleaned[<span class="st">"geography"</span>],regions)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>avocado_cleaned.loc[is_state, <span class="st">"geo_type"</span>] <span class="op">=</span> <span class="st">"state"</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>avocado_cleaned.loc[is_us, <span class="st">"geo_type"</span>] <span class="op">=</span> <span class="st">"U.S."</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>avocado_cleaned.loc[is_region, <span class="st">"geo_type"</span>] <span class="op">=</span> <span class="st">"region"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="which-major-geographical-region-sold-the-most-total-organic-small-hass-avocados-in-2017" class="level2">
+<h2 class="anchored" data-anchor-id="which-major-geographical-region-sold-the-most-total-organic-small-hass-avocados-in-2017">3: Which major geographical region sold the most total organic, small Hass avocados in 2017?</h2>
+<div id="dbb521c0" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>avo_small<span class="op">=</span>avocado_cleaned[(avocado_cleaned[<span class="st">"type"</span>]<span class="op">==</span><span class="st">"organic"</span>) <span class="op">&amp;</span> (avocado_cleaned[<span class="st">"geo_type"</span>]<span class="op">==</span><span class="st">"region"</span>) <span class="op">&amp;</span> (avocado_cleaned[<span class="st">"year"</span>]<span class="op">==</span><span class="dv">2017</span>)]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>geo_sm_sold<span class="op">=</span>avo_small[[<span class="st">"geography"</span>, <span class="st">"sm"</span>]].groupby(<span class="st">"geography"</span>).<span class="bu">sum</span>()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>geo_sm_sold.sort_values(by <span class="op">=</span> [<span class="st">"sm"</span>], ascending<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="52">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">sm</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">geography</th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">West</td>
+<td>1870206.29</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">South Central</td>
+<td>1717104.19</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Northeast</td>
+<td>925832.36</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Southeast</td>
+<td>285124.34</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Great Lakes</td>
+<td>202487.68</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Midsouth</td>
+<td>186395.50</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Plains</td>
+<td>168583.40</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">West Tex/New Mexico</td>
+<td>110910.95</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Northern New England</td>
+<td>1249.48</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>The West region sold the most total organic, small Hass avocados in 2017.</p>
+</section>
+<section id="which-month-is-the-highest-average-volume-of-avocado-sales" class="level2">
+<h2 class="anchored" data-anchor-id="which-month-is-the-highest-average-volume-of-avocado-sales">4: Which month is the highest average volume of avocado sales?</h2>
+<div id="8606fe4b" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>avo_monthly<span class="op">=</span>avocado_cleaned</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>avo_monthly[<span class="st">"month"</span>]<span class="op">=</span>avocado_cleaned[<span class="st">"date"</span>].<span class="bu">str</span>[<span class="dv">5</span>:<span class="dv">7</span>]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>avo_monthly[[<span class="st">"total_volume"</span>, <span class="st">"month"</span>]].groupby(<span class="st">"month"</span>).mean().sort_values(by <span class="op">=</span> [<span class="st">"total_volume"</span>], ascending<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="53">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">total_volume</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">month</th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">05</td>
+<td>1.123632e+06</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">02</td>
+<td>1.095374e+06</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">06</td>
+<td>1.051247e+06</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">04</td>
+<td>1.016582e+06</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">03</td>
+<td>9.957150e+05</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">01</td>
+<td>9.853122e+05</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">07</td>
+<td>9.832681e+05</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">08</td>
+<td>9.499249e+05</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">09</td>
+<td>9.064773e+05</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10</td>
+<td>8.446863e+05</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">11</td>
+<td>8.223470e+05</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">12</td>
+<td>8.076695e+05</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>May has the highest average volume of avocado sales.</p>
+</section>
+<section id="which-metro-area-geographical-regions-sold-the-most-total-avocados-plot-side-by-side-box-plots-of-the-total-volume-for-only-the-five-metro-geographical-regions-with-the-highest-averages-for-the-total_volume-variable." class="level2">
+<h2 class="anchored" data-anchor-id="which-metro-area-geographical-regions-sold-the-most-total-avocados-plot-side-by-side-box-plots-of-the-total-volume-for-only-the-five-metro-geographical-regions-with-the-highest-averages-for-the-total_volume-variable.">5: Which metro area geographical regions sold the most total avocados? Plot side-by-side box-plots of the total volume for only the five metro geographical regions with the highest averages for the total_volume variable.</h2>
+<div id="6729de03" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>avo_regions<span class="op">=</span>avocado_cleaned[avocado_cleaned[<span class="st">"geo_type"</span>]<span class="op">==</span><span class="st">"city"</span>]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>region_volume<span class="op">=</span>avo_regions[[<span class="st">"total_volume"</span>, <span class="st">"geography"</span>]].groupby(<span class="st">"geography"</span>).mean().sort_values(by <span class="op">=</span> [<span class="st">"total_volume"</span>], ascending<span class="op">=</span><span class="va">False</span>).reset_index().loc[<span class="dv">0</span>:<span class="dv">4</span>,:]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>region_volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="54">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">geography</th>
+<th data-quarto-table-cell-role="th">total_volume</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Los Angeles</td>
+<td>1.567566e+06</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Dallas/Ft. Worth</td>
+<td>7.127519e+05</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Houston</td>
+<td>6.876533e+05</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Phoenix/Tucson</td>
+<td>6.250383e+05</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Denver</td>
+<td>4.541332e+05</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="60d1b138" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>is_most<span class="op">=</span>isin(avocado_cleaned[<span class="st">"geography"</span>], region_volume[<span class="st">"geography"</span>])</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>vol_regions<span class="op">=</span>avocado_cleaned.loc[is_most]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="fb97f106" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotnine <span class="im">as</span> p9</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(vol_regions,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"geography"</span>, </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="st">"total_volume"</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.geom_boxplot()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.labs(</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"Metro Area"</span>, </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"Total Volume Sold"</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab_2_files/figure-html/cell-13-output-1.png" width="672" height="480" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="from-your-cleaned-data-set-create-a-data-set-with-only-these-california-regions-and-answer-the-following-questions-about-these-california-regions-only." class="level2">
+<h2 class="anchored" data-anchor-id="from-your-cleaned-data-set-create-a-data-set-with-only-these-california-regions-and-answer-the-following-questions-about-these-california-regions-only.">6: From your cleaned data set, create a data set with only these California regions and answer the following questions about these California regions only.</h2>
+<div id="ef56d9f0" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>is_california<span class="op">=</span>isin(avocado_cleaned[<span class="st">"geography"</span>], [<span class="st">"San Francisco"</span>, <span class="st">"Los Angeles"</span>, <span class="st">"Sacramento"</span>, <span class="st">"San Diego"</span>])</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>cali_regions<span class="op">=</span>avocado_cleaned.loc[is_california]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="in-which-california-regions-is-the-price-of-organic-versus-conventional-avocados-most-different-support-your-answer-with-a-few-summary-statistics-and-a-visualization." class="level2">
+<h2 class="anchored" data-anchor-id="in-which-california-regions-is-the-price-of-organic-versus-conventional-avocados-most-different-support-your-answer-with-a-few-summary-statistics-and-a-visualization.">7: In which California regions is the price of organic versus conventional avocados most different? Support your answer with a few summary statistics AND a visualization.</h2>
+<div id="24106ace" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cali_organic<span class="op">=</span>cali_regions[cali_regions[<span class="st">"type"</span>]<span class="op">==</span><span class="st">"organic"</span>]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>cali_organic[<span class="st">"average_price_org"</span>]<span class="op">=</span>cali_organic[<span class="st">"average_price"</span>]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>cali_organic<span class="op">=</span>cali_organic[[<span class="st">"geography"</span>, <span class="st">"date"</span>, <span class="st">"average_price_org"</span>, <span class="st">"year"</span>]]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>cali_organic</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>cali_conv<span class="op">=</span>cali_regions[cali_regions[<span class="st">"type"</span>]<span class="op">==</span><span class="st">"conventional"</span>]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>cali_conv[<span class="st">"average_price_conv"</span>]<span class="op">=</span>cali_conv[<span class="st">"average_price"</span>]</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>cali_conv<span class="op">=</span>cali_conv[[<span class="st">"geography"</span>, <span class="st">"date"</span>, <span class="st">"average_price_conv"</span>, <span class="st">"year"</span>]]</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>cali_both <span class="op">=</span> cali_organic.merge(cali_conv, on<span class="op">=</span>[<span class="st">"date"</span>, <span class="st">"geography"</span>, <span class="st">"year"</span>], how<span class="op">=</span><span class="st">"inner"</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>cali_both[<span class="st">"price_diff"</span>]<span class="op">=</span>cali_both[<span class="st">"average_price_org"</span>]<span class="op">-</span>cali_both[<span class="st">"average_price_conv"</span>]</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>cali_both[[<span class="st">"geography"</span>, <span class="st">"price_diff"</span>]].groupby(<span class="st">"geography"</span>).mean().sort_values(by <span class="op">=</span> [<span class="st">"price_diff"</span>], ascending<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/42/_r31h9t105bfw6ff7pgp8_7r0000gn/T/ipykernel_7908/2801258495.py:2: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+/var/folders/42/_r31h9t105bfw6ff7pgp8_7r0000gn/T/ipykernel_7908/2801258495.py:7: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="58">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">price_diff</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">geography</th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">San Francisco</td>
+<td>0.718954</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">San Diego</td>
+<td>0.684510</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Sacramento</td>
+<td>0.578497</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Los Angeles</td>
+<td>0.527778</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>San Francisco had the highest price difference between organic and conventional avocados, and Los Angeles had the lowest price difference between organic and conventional avocados.</p>
+<div id="5aaf81a7" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(cali_both,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"geography"</span>, </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> <span class="st">"price_diff"</span>, </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  fill<span class="op">=</span><span class="st">"year"</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.geom_boxplot()</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.labs(</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"City in California"</span>, </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"Price Difference between Organic and Conventional"</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab_2_files/figure-html/cell-16-output-1.png" width="672" height="480" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-following-plot-shows-for-all-four-california-regions-the-proportion-of-the-average-hass-avocado-sales-that-are-small-large-or-extra-large-conventional-vs.-organic.-recreate-the-plot-you-do-not-have-to-replicate-the-exact-finishing-touches---e.g.-color-theme---but-your-plot-should-resemble-the-content-of-this-plot." class="level2">
+<h2 class="anchored" data-anchor-id="the-following-plot-shows-for-all-four-california-regions-the-proportion-of-the-average-hass-avocado-sales-that-are-small-large-or-extra-large-conventional-vs.-organic.-recreate-the-plot-you-do-not-have-to-replicate-the-exact-finishing-touches---e.g.-color-theme---but-your-plot-should-resemble-the-content-of-this-plot.">8: The following plot shows, for all four California regions, the proportion of the average Hass avocado sales that are small, large, or extra large; conventional vs.&nbsp;organic. Recreate the plot; you do not have to replicate the exact finishing touches - e.g., color, theme - but your plot should resemble the content of this plot.</h2>
+<div id="c1da29e7" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cali_wide<span class="op">=</span>cali_regions[[<span class="st">"geography"</span>, <span class="st">"sm"</span>, <span class="st">"large"</span>, <span class="st">"xl"</span>, <span class="st">"type"</span>]]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cali_long <span class="op">=</span> cali_wide.melt(id_vars<span class="op">=</span>[<span class="st">"geography"</span>, <span class="st">"type"</span>], var_name<span class="op">=</span><span class="st">"size"</span>, value_name<span class="op">=</span><span class="st">"quantity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="80715085" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(cali_long,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"geography"</span>, </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  y<span class="op">=</span> <span class="st">"quantity"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  fill<span class="op">=</span><span class="st">"size"</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.geom_bar(stat<span class="op">=</span><span class="st">"identity"</span>, position<span class="op">=</span><span class="st">"fill"</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.facet_wrap(<span class="st">"type"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab_2_files/figure-html/cell-18-output-1.png" width="672" height="480" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="outside-data-questions" class="level2">
+<h2 class="anchored" data-anchor-id="outside-data-questions">Outside Data Questions</h2>
+<p>data found at: https://www.zillow.com/research/data/</p>
+<div id="91e2dec6" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>houses <span class="op">=</span> pd.read_csv(<span class="st">"~/Desktop/GSB 544/Labs/Lab_2/Data/City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv"</span>, sep<span class="op">=</span><span class="st">','</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>cities<span class="op">=</span>isin(houses[<span class="st">"RegionName"</span>], [<span class="st">"San Francisco"</span>, <span class="st">"San Diego"</span>, <span class="st">"Los Angeles"</span>, <span class="st">"Sacramento"</span>])</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>ca_houses<span class="op">=</span>houses.loc[cities]</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>ca_houses.head(<span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="62">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">RegionID</th>
+<th data-quarto-table-cell-role="th">SizeRank</th>
+<th data-quarto-table-cell-role="th">RegionName</th>
+<th data-quarto-table-cell-role="th">RegionType</th>
+<th data-quarto-table-cell-role="th">StateName</th>
+<th data-quarto-table-cell-role="th">State</th>
+<th data-quarto-table-cell-role="th">Metro</th>
+<th data-quarto-table-cell-role="th">CountyName</th>
+<th data-quarto-table-cell-role="th">2000-01-31</th>
+<th data-quarto-table-cell-role="th">2000-02-29</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">2024-11-30</th>
+<th data-quarto-table-cell-role="th">2024-12-31</th>
+<th data-quarto-table-cell-role="th">2025-01-31</th>
+<th data-quarto-table-cell-role="th">2025-02-28</th>
+<th data-quarto-table-cell-role="th">2025-03-31</th>
+<th data-quarto-table-cell-role="th">2025-04-30</th>
+<th data-quarto-table-cell-role="th">2025-05-31</th>
+<th data-quarto-table-cell-role="th">2025-06-30</th>
+<th data-quarto-table-cell-role="th">2025-07-31</th>
+<th data-quarto-table-cell-role="th">2025-08-31</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>12447</td>
+<td>1</td>
+<td>Los Angeles</td>
+<td>city</td>
+<td>CA</td>
+<td>CA</td>
+<td>Los Angeles-Long Beach-Anaheim, CA</td>
+<td>Los Angeles County</td>
+<td>220091.989964</td>
+<td>220425.233197</td>
+<td>...</td>
+<td>9.661597e+05</td>
+<td>9.693400e+05</td>
+<td>9.672548e+05</td>
+<td>9.615709e+05</td>
+<td>9.527424e+05</td>
+<td>9.462337e+05</td>
+<td>9.401262e+05</td>
+<td>9.345571e+05</td>
+<td>9.314540e+05</td>
+<td>9.306223e+05</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">8</td>
+<td>54296</td>
+<td>8</td>
+<td>San Diego</td>
+<td>city</td>
+<td>CA</td>
+<td>CA</td>
+<td>San Diego-Chula Vista-Carlsbad, CA</td>
+<td>San Diego County</td>
+<td>219248.787108</td>
+<td>220257.152521</td>
+<td>...</td>
+<td>1.019580e+06</td>
+<td>1.018297e+06</td>
+<td>1.017164e+06</td>
+<td>1.016324e+06</td>
+<td>1.014030e+06</td>
+<td>1.010062e+06</td>
+<td>1.003287e+06</td>
+<td>9.953445e+05</td>
+<td>9.884280e+05</td>
+<td>9.827333e+05</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">17</td>
+<td>20330</td>
+<td>17</td>
+<td>San Francisco</td>
+<td>city</td>
+<td>CA</td>
+<td>CA</td>
+<td>San Francisco-Oakland-Berkeley, CA</td>
+<td>San Francisco County</td>
+<td>405811.453594</td>
+<td>407879.970652</td>
+<td>...</td>
+<td>1.254303e+06</td>
+<td>1.257052e+06</td>
+<td>1.259433e+06</td>
+<td>1.260005e+06</td>
+<td>1.258497e+06</td>
+<td>1.256930e+06</td>
+<td>1.252606e+06</td>
+<td>1.246476e+06</td>
+<td>1.241888e+06</td>
+<td>1.240382e+06</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">28</td>
+<td>20288</td>
+<td>28</td>
+<td>Sacramento</td>
+<td>city</td>
+<td>CA</td>
+<td>CA</td>
+<td>Sacramento-Roseville-Folsom, CA</td>
+<td>Sacramento County</td>
+<td>123200.345795</td>
+<td>123535.301222</td>
+<td>...</td>
+<td>4.902773e+05</td>
+<td>4.905897e+05</td>
+<td>4.904015e+05</td>
+<td>4.892982e+05</td>
+<td>4.871909e+05</td>
+<td>4.853070e+05</td>
+<td>4.832061e+05</td>
+<td>4.808936e+05</td>
+<td>4.782805e+05</td>
+<td>4.759521e+05</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6745</td>
+<td>29290</td>
+<td>7031</td>
+<td>San Diego</td>
+<td>city</td>
+<td>TX</td>
+<td>TX</td>
+<td>Alice, TX</td>
+<td>Duval County</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>9.471126e+04</td>
+<td>9.479769e+04</td>
+<td>9.548883e+04</td>
+<td>9.627123e+04</td>
+<td>9.621335e+04</td>
+<td>9.428680e+04</td>
+<td>9.204047e+04</td>
+<td>9.015940e+04</td>
+<td>8.873794e+04</td>
+<td>8.735841e+04</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">16115</td>
+<td>54259</td>
+<td>18197</td>
+<td>Sacramento</td>
+<td>city</td>
+<td>KY</td>
+<td>KY</td>
+<td>Owensboro, KY</td>
+<td>McLean County</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>...</td>
+<td>1.322283e+05</td>
+<td>1.340499e+05</td>
+<td>1.359700e+05</td>
+<td>1.379493e+05</td>
+<td>1.393536e+05</td>
+<td>1.404515e+05</td>
+<td>1.402835e+05</td>
+<td>1.384222e+05</td>
+<td>1.354880e+05</td>
+<td>1.326204e+05</td>
+</tr>
+</tbody>
+</table>
+
+<p>6 rows × 316 columns</p>
+</div>
+</div>
+</div>
+<div id="c1298ef1" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>houses_clean<span class="op">=</span>ca_houses.drop(columns<span class="op">=</span>[<span class="st">"RegionID"</span>, <span class="st">"SizeRank"</span>, <span class="st">"RegionType"</span>, <span class="st">"StateName"</span>, <span class="st">"State"</span>, <span class="st">"Metro"</span>, <span class="st">"CountyName"</span>])</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>houses_long<span class="op">=</span>houses_clean.melt(id_vars<span class="op">=</span>[<span class="st">"RegionName"</span>], var_name<span class="op">=</span><span class="st">"date"</span>, value_name<span class="op">=</span><span class="st">"price"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>houses_long[<span class="st">"year"</span>]<span class="op">=</span>houses_long[<span class="st">"date"</span>].<span class="bu">str</span>[<span class="dv">0</span>:<span class="dv">4</span>].astype(<span class="bu">int</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>houses_long[<span class="st">"month"</span>]<span class="op">=</span>houses_long[<span class="st">"date"</span>].<span class="bu">str</span>[<span class="dv">5</span>:<span class="dv">7</span>]</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>houses_long[<span class="st">"geography"</span>]<span class="op">=</span>houses_long[<span class="st">"RegionName"</span>]</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>houses_long.head(<span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="63">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">RegionName</th>
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th">price</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">month</th>
+<th data-quarto-table-cell-role="th">geography</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Los Angeles</td>
+<td>2000-01-31</td>
+<td>220091.989964</td>
+<td>2000</td>
+<td>01</td>
+<td>Los Angeles</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>San Diego</td>
+<td>2000-01-31</td>
+<td>219248.787108</td>
+<td>2000</td>
+<td>01</td>
+<td>San Diego</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>San Francisco</td>
+<td>2000-01-31</td>
+<td>405811.453594</td>
+<td>2000</td>
+<td>01</td>
+<td>San Francisco</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Sacramento</td>
+<td>2000-01-31</td>
+<td>123200.345795</td>
+<td>2000</td>
+<td>01</td>
+<td>Sacramento</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>San Diego</td>
+<td>2000-01-31</td>
+<td>NaN</td>
+<td>2000</td>
+<td>01</td>
+<td>San Diego</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>Sacramento</td>
+<td>2000-01-31</td>
+<td>NaN</td>
+<td>2000</td>
+<td>01</td>
+<td>Sacramento</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="8ae6d257" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>avo_houses<span class="op">=</span>houses_long.merge(cali_regions, on<span class="op">=</span>[<span class="st">"month"</span>, <span class="st">"geography"</span>, <span class="st">"year"</span>], how<span class="op">=</span><span class="st">"inner"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>avo_houses.head(<span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="64">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">RegionName</th>
+<th data-quarto-table-cell-role="th">date_x</th>
+<th data-quarto-table-cell-role="th">price</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">month</th>
+<th data-quarto-table-cell-role="th">geography</th>
+<th data-quarto-table-cell-role="th">date_y</th>
+<th data-quarto-table-cell-role="th">average_price</th>
+<th data-quarto-table-cell-role="th">total_volume</th>
+<th data-quarto-table-cell-role="th">total_bags</th>
+<th data-quarto-table-cell-role="th">small_bags</th>
+<th data-quarto-table-cell-role="th">large_bags</th>
+<th data-quarto-table-cell-role="th">xlarge_bags</th>
+<th data-quarto-table-cell-role="th">type</th>
+<th data-quarto-table-cell-role="th">sm</th>
+<th data-quarto-table-cell-role="th">large</th>
+<th data-quarto-table-cell-role="th">xl</th>
+<th data-quarto-table-cell-role="th">geo_type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Los Angeles</td>
+<td>2015-01-31</td>
+<td>515125.421594</td>
+<td>2015</td>
+<td>01</td>
+<td>Los Angeles</td>
+<td>2015-01-04</td>
+<td>0.85</td>
+<td>2682159.95</td>
+<td>255504.05</td>
+<td>215571.80</td>
+<td>36981.72</td>
+<td>2950.53</td>
+<td>conventional</td>
+<td>1837999.65</td>
+<td>524430.47</td>
+<td>64225.78</td>
+<td>city</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Los Angeles</td>
+<td>2015-01-31</td>
+<td>515125.421594</td>
+<td>2015</td>
+<td>01</td>
+<td>Los Angeles</td>
+<td>2015-01-04</td>
+<td>1.25</td>
+<td>54495.54</td>
+<td>5050.63</td>
+<td>5050.63</td>
+<td>0.00</td>
+<td>0.00</td>
+<td>organic</td>
+<td>47721.51</td>
+<td>1723.40</td>
+<td>0.00</td>
+<td>city</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Los Angeles</td>
+<td>2015-01-31</td>
+<td>515125.421594</td>
+<td>2015</td>
+<td>01</td>
+<td>Los Angeles</td>
+<td>2015-01-11</td>
+<td>0.85</td>
+<td>2713699.60</td>
+<td>251246.65</td>
+<td>222971.68</td>
+<td>25111.74</td>
+<td>3163.23</td>
+<td>conventional</td>
+<td>1786326.65</td>
+<td>617233.39</td>
+<td>58892.91</td>
+<td>city</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Los Angeles</td>
+<td>2015-01-31</td>
+<td>515125.421594</td>
+<td>2015</td>
+<td>01</td>
+<td>Los Angeles</td>
+<td>2015-01-11</td>
+<td>1.08</td>
+<td>60232.63</td>
+<td>6081.88</td>
+<td>6081.88</td>
+<td>0.00</td>
+<td>0.00</td>
+<td>organic</td>
+<td>52087.31</td>
+<td>2063.44</td>
+<td>0.00</td>
+<td>city</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Los Angeles</td>
+<td>2015-01-31</td>
+<td>515125.421594</td>
+<td>2015</td>
+<td>01</td>
+<td>Los Angeles</td>
+<td>2015-01-18</td>
+<td>0.89</td>
+<td>2800679.50</td>
+<td>290195.16</td>
+<td>260857.96</td>
+<td>26671.18</td>
+<td>2666.02</td>
+<td>conventional</td>
+<td>1925013.31</td>
+<td>526106.80</td>
+<td>59364.23</td>
+<td>city</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>Los Angeles</td>
+<td>2015-01-31</td>
+<td>515125.421594</td>
+<td>2015</td>
+<td>01</td>
+<td>Los Angeles</td>
+<td>2015-01-18</td>
+<td>1.29</td>
+<td>43649.12</td>
+<td>8541.34</td>
+<td>8541.34</td>
+<td>0.00</td>
+<td>0.00</td>
+<td>organic</td>
+<td>33738.87</td>
+<td>1368.91</td>
+<td>0.00</td>
+<td>city</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="46e6276a" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(avo_houses,</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"price"</span>, </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  y<span class="op">=</span> <span class="st">"total_volume"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  color<span class="op">=</span><span class="st">"geography"</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.geom_point()</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.labs(</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"House Price"</span>, </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"Avocado Sales Volume"</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/opt/anaconda3/lib/python3.13/site-packages/plotnine/layer.py:372: PlotnineWarning: geom_point : Removed 840 rows containing missing values.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab_2_files/figure-html/cell-22-output-2.png" width="672" height="480" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In San Diego, San Francisco, and Sacramento avocado sales volume is pretty similar, but in Los Angeles the avocado sales volume is much higher. Los Angeles also is in the middle range for house prices, so it is unclear that avocado sales prices is correlated with home prices.</p>
+<div id="7ad04e5f" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(avo_houses,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"price"</span>, </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  y<span class="op">=</span> <span class="st">"average_price"</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  color<span class="op">=</span><span class="st">"geography"</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.geom_point()</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> p9.labs(</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"House Price"</span>, </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"Avocado Average Price"</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/opt/anaconda3/lib/python3.13/site-packages/plotnine/layer.py:372: PlotnineWarning: geom_point : Removed 840 rows containing missing values.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab_2_files/figure-html/cell-23-output-2.png" width="672" height="480" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Additionally, the avocado average price is pretty similar between the regions, and there is little correltaion between the house price and avocado average price.</p>
 </section>
 
 </main>
