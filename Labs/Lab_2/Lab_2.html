@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<p><strong>GitHub Repository:</strong> https://github.com/sadieakel/GSB-544/tree/master/Labs/Lab_2 </p>
+
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
@@ -103,16 +105,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="import-of-data-calling-packages" class="level2">
 <h2 class="anchored" data-anchor-id="import-of-data-calling-packages">0: Import of Data, Calling Packages</h2>
-<div id="55df65f3" class="cell" data-execution_count="1">
+<div id="aea262e2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="fd175118" class="cell" data-execution_count="2">
+<div id="8b731fd3" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>avocados <span class="op">=</span> pd.read_csv(<span class="st">"~/Desktop/GSB 544/Labs/Lab_2/Data/avocado-updated-2020.csv"</span>, sep<span class="op">=</span><span class="st">','</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="describing-the-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="describing-the-dataset">1: Describing the Dataset</h2>
-<div id="aea0ad7e" class="cell" data-execution_count="3">
+<div id="fccb3eda" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>avocados.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
@@ -141,10 +143,10 @@ memory usage: 3.3+ MB</code></pre>
 </section>
 <section id="data-cleaning" class="level2">
 <h2 class="anchored" data-anchor-id="data-cleaning">2: Data Cleaning</h2>
-<div id="a5147846" class="cell" data-execution_count="4">
+<div id="e625589d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>avocado_cleaned<span class="op">=</span>avocados[[<span class="st">"date"</span>, <span class="st">"average_price"</span>, <span class="st">"total_volume"</span>, <span class="st">"total_bags"</span>, <span class="st">"small_bags"</span>, <span class="st">"large_bags"</span>, <span class="st">"xlarge_bags"</span>, <span class="st">"type"</span>, <span class="st">"year"</span>,<span class="st">"geography"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="bf50abbc" class="cell" data-execution_count="5">
+<div id="3958f99c" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>avocado_cleaned[<span class="st">"sm"</span>]<span class="op">=</span>avocados[<span class="st">"4046"</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>avocado_cleaned[<span class="st">"large"</span>]<span class="op">=</span>avocados[<span class="st">"4225"</span>]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>avocado_cleaned[<span class="st">"xl"</span>]<span class="op">=</span>avocados[<span class="st">"4770"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -161,10 +163,10 @@ Try using .loc[row_indexer,col_indexer] = value instead
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy</code></pre>
 </div>
 </div>
-<div id="3e8e3490" class="cell" data-execution_count="6">
+<div id="c8eb69f7" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#avocados["geography"].value_counts()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="0ddec118" class="cell" data-execution_count="7">
+<div id="a17c8f71" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> isin </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>states<span class="op">=</span>[<span class="st">"California"</span>, <span class="st">"South Carolina"</span>, <span class="st">"New York"</span>]</span>
@@ -184,11 +186,11 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </section>
 <section id="which-major-geographical-region-sold-the-most-total-organic-small-hass-avocados-in-2017" class="level2">
 <h2 class="anchored" data-anchor-id="which-major-geographical-region-sold-the-most-total-organic-small-hass-avocados-in-2017">3: Which major geographical region sold the most total organic, small Hass avocados in 2017?</h2>
-<div id="dbb521c0" class="cell" data-execution_count="8">
+<div id="7bde4c7f" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>avo_small<span class="op">=</span>avocado_cleaned[(avocado_cleaned[<span class="st">"type"</span>]<span class="op">==</span><span class="st">"organic"</span>) <span class="op">&amp;</span> (avocado_cleaned[<span class="st">"geo_type"</span>]<span class="op">==</span><span class="st">"region"</span>) <span class="op">&amp;</span> (avocado_cleaned[<span class="st">"year"</span>]<span class="op">==</span><span class="dv">2017</span>)]</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>geo_sm_sold<span class="op">=</span>avo_small[[<span class="st">"geography"</span>, <span class="st">"sm"</span>]].groupby(<span class="st">"geography"</span>).<span class="bu">sum</span>()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>geo_sm_sold.sort_values(by <span class="op">=</span> [<span class="st">"sm"</span>], ascending<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="52">
+<div class="cell-output cell-output-display" data-execution_count="74">
 <div>
 
 
@@ -250,11 +252,11 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </section>
 <section id="which-month-is-the-highest-average-volume-of-avocado-sales" class="level2">
 <h2 class="anchored" data-anchor-id="which-month-is-the-highest-average-volume-of-avocado-sales">4: Which month is the highest average volume of avocado sales?</h2>
-<div id="8606fe4b" class="cell" data-execution_count="9">
+<div id="63f7c13c" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>avo_monthly<span class="op">=</span>avocado_cleaned</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>avo_monthly[<span class="st">"month"</span>]<span class="op">=</span>avocado_cleaned[<span class="st">"date"</span>].<span class="bu">str</span>[<span class="dv">5</span>:<span class="dv">7</span>]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>avo_monthly[[<span class="st">"total_volume"</span>, <span class="st">"month"</span>]].groupby(<span class="st">"month"</span>).mean().sort_values(by <span class="op">=</span> [<span class="st">"total_volume"</span>], ascending<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="53">
+<div class="cell-output cell-output-display" data-execution_count="75">
 <div>
 
 
@@ -328,11 +330,11 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </section>
 <section id="which-metro-area-geographical-regions-sold-the-most-total-avocados-plot-side-by-side-box-plots-of-the-total-volume-for-only-the-five-metro-geographical-regions-with-the-highest-averages-for-the-total_volume-variable." class="level2">
 <h2 class="anchored" data-anchor-id="which-metro-area-geographical-regions-sold-the-most-total-avocados-plot-side-by-side-box-plots-of-the-total-volume-for-only-the-five-metro-geographical-regions-with-the-highest-averages-for-the-total_volume-variable.">5: Which metro area geographical regions sold the most total avocados? Plot side-by-side box-plots of the total volume for only the five metro geographical regions with the highest averages for the total_volume variable.</h2>
-<div id="6729de03" class="cell" data-execution_count="10">
+<div id="dccf2cf0" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>avo_regions<span class="op">=</span>avocado_cleaned[avocado_cleaned[<span class="st">"geo_type"</span>]<span class="op">==</span><span class="st">"city"</span>]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>region_volume<span class="op">=</span>avo_regions[[<span class="st">"total_volume"</span>, <span class="st">"geography"</span>]].groupby(<span class="st">"geography"</span>).mean().sort_values(by <span class="op">=</span> [<span class="st">"total_volume"</span>], ascending<span class="op">=</span><span class="va">False</span>).reset_index().loc[<span class="dv">0</span>:<span class="dv">4</span>,:]</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>region_volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="54">
+<div class="cell-output cell-output-display" data-execution_count="76">
 <div>
 
 
@@ -376,11 +378,11 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 </div>
-<div id="60d1b138" class="cell" data-execution_count="11">
+<div id="c7df95c2" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>is_most<span class="op">=</span>isin(avocado_cleaned[<span class="st">"geography"</span>], region_volume[<span class="st">"geography"</span>])</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>vol_regions<span class="op">=</span>avocado_cleaned.loc[is_most]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="fb97f106" class="cell" data-execution_count="12">
+<div id="1b767166" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotnine <span class="im">as</span> p9</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(vol_regions,</span>
@@ -405,14 +407,14 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </section>
 <section id="from-your-cleaned-data-set-create-a-data-set-with-only-these-california-regions-and-answer-the-following-questions-about-these-california-regions-only." class="level2">
 <h2 class="anchored" data-anchor-id="from-your-cleaned-data-set-create-a-data-set-with-only-these-california-regions-and-answer-the-following-questions-about-these-california-regions-only.">6: From your cleaned data set, create a data set with only these California regions and answer the following questions about these California regions only.</h2>
-<div id="ef56d9f0" class="cell" data-execution_count="13">
+<div id="8970f039" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>is_california<span class="op">=</span>isin(avocado_cleaned[<span class="st">"geography"</span>], [<span class="st">"San Francisco"</span>, <span class="st">"Los Angeles"</span>, <span class="st">"Sacramento"</span>, <span class="st">"San Diego"</span>])</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>cali_regions<span class="op">=</span>avocado_cleaned.loc[is_california]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="in-which-california-regions-is-the-price-of-organic-versus-conventional-avocados-most-different-support-your-answer-with-a-few-summary-statistics-and-a-visualization." class="level2">
 <h2 class="anchored" data-anchor-id="in-which-california-regions-is-the-price-of-organic-versus-conventional-avocados-most-different-support-your-answer-with-a-few-summary-statistics-and-a-visualization.">7: In which California regions is the price of organic versus conventional avocados most different? Support your answer with a few summary statistics AND a visualization.</h2>
-<div id="24106ace" class="cell" data-execution_count="14">
+<div id="9d4a96c7" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cali_organic<span class="op">=</span>cali_regions[cali_regions[<span class="st">"type"</span>]<span class="op">==</span><span class="st">"organic"</span>]</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>cali_organic[<span class="st">"average_price_org"</span>]<span class="op">=</span>cali_organic[<span class="st">"average_price"</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>cali_organic<span class="op">=</span>cali_organic[[<span class="st">"geography"</span>, <span class="st">"date"</span>, <span class="st">"average_price_org"</span>, <span class="st">"year"</span>]]</span>
@@ -437,7 +439,7 @@ Try using .loc[row_indexer,col_indexer] = value instead
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="58">
+<div class="cell-output cell-output-display" data-execution_count="80">
 <div>
 
 
@@ -476,7 +478,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 <p>San Francisco had the highest price difference between organic and conventional avocados, and Los Angeles had the lowest price difference between organic and conventional avocados.</p>
-<div id="5aaf81a7" class="cell" data-execution_count="15">
+<div id="7a24b4f3" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(cali_both,</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"geography"</span>, </span>
@@ -500,11 +502,11 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </section>
 <section id="the-following-plot-shows-for-all-four-california-regions-the-proportion-of-the-average-hass-avocado-sales-that-are-small-large-or-extra-large-conventional-vs.-organic.-recreate-the-plot-you-do-not-have-to-replicate-the-exact-finishing-touches---e.g.-color-theme---but-your-plot-should-resemble-the-content-of-this-plot." class="level2">
 <h2 class="anchored" data-anchor-id="the-following-plot-shows-for-all-four-california-regions-the-proportion-of-the-average-hass-avocado-sales-that-are-small-large-or-extra-large-conventional-vs.-organic.-recreate-the-plot-you-do-not-have-to-replicate-the-exact-finishing-touches---e.g.-color-theme---but-your-plot-should-resemble-the-content-of-this-plot.">8: The following plot shows, for all four California regions, the proportion of the average Hass avocado sales that are small, large, or extra large; conventional vs.&nbsp;organic. Recreate the plot; you do not have to replicate the exact finishing touches - e.g., color, theme - but your plot should resemble the content of this plot.</h2>
-<div id="c1da29e7" class="cell" data-execution_count="16">
+<div id="3ddb7756" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cali_wide<span class="op">=</span>cali_regions[[<span class="st">"geography"</span>, <span class="st">"sm"</span>, <span class="st">"large"</span>, <span class="st">"xl"</span>, <span class="st">"type"</span>]]</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cali_long <span class="op">=</span> cali_wide.melt(id_vars<span class="op">=</span>[<span class="st">"geography"</span>, <span class="st">"type"</span>], var_name<span class="op">=</span><span class="st">"size"</span>, value_name<span class="op">=</span><span class="st">"quantity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="80715085" class="cell" data-execution_count="17">
+<div id="376eb8a9" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(cali_long,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"geography"</span>, </span>
@@ -526,12 +528,12 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <section id="outside-data-questions" class="level2">
 <h2 class="anchored" data-anchor-id="outside-data-questions">Outside Data Questions</h2>
 <p>data found at: https://www.zillow.com/research/data/</p>
-<div id="91e2dec6" class="cell" data-execution_count="18">
+<div id="a734d9e2" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>houses <span class="op">=</span> pd.read_csv(<span class="st">"~/Desktop/GSB 544/Labs/Lab_2/Data/City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv"</span>, sep<span class="op">=</span><span class="st">','</span>)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>cities<span class="op">=</span>isin(houses[<span class="st">"RegionName"</span>], [<span class="st">"San Francisco"</span>, <span class="st">"San Diego"</span>, <span class="st">"Los Angeles"</span>, <span class="st">"Sacramento"</span>])</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>ca_houses<span class="op">=</span>houses.loc[cities]</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>ca_houses.head(<span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="62">
+<div class="cell-output cell-output-display" data-execution_count="84">
 <div>
 
 
@@ -714,7 +716,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 </div>
-<div id="c1298ef1" class="cell" data-execution_count="19">
+<div id="2310ab02" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>houses_clean<span class="op">=</span>ca_houses.drop(columns<span class="op">=</span>[<span class="st">"RegionID"</span>, <span class="st">"SizeRank"</span>, <span class="st">"RegionType"</span>, <span class="st">"StateName"</span>, <span class="st">"State"</span>, <span class="st">"Metro"</span>, <span class="st">"CountyName"</span>])</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>houses_long<span class="op">=</span>houses_clean.melt(id_vars<span class="op">=</span>[<span class="st">"RegionName"</span>], var_name<span class="op">=</span><span class="st">"date"</span>, value_name<span class="op">=</span><span class="st">"price"</span>)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>houses_long[<span class="st">"year"</span>]<span class="op">=</span>houses_long[<span class="st">"date"</span>].<span class="bu">str</span>[<span class="dv">0</span>:<span class="dv">4</span>].astype(<span class="bu">int</span>)</span>
@@ -722,7 +724,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>houses_long[<span class="st">"geography"</span>]<span class="op">=</span>houses_long[<span class="st">"RegionName"</span>]</span>
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>houses_long.head(<span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="63">
+<div class="cell-output cell-output-display" data-execution_count="85">
 <div>
 
 
@@ -799,10 +801,10 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 </div>
-<div id="8ae6d257" class="cell" data-execution_count="20">
+<div id="2edcef9e" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>avo_houses<span class="op">=</span>houses_long.merge(cali_regions, on<span class="op">=</span>[<span class="st">"month"</span>, <span class="st">"geography"</span>, <span class="st">"year"</span>], how<span class="op">=</span><span class="st">"inner"</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>avo_houses.head(<span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="64">
+<div class="cell-output cell-output-display" data-execution_count="86">
 <div>
 
 
@@ -963,7 +965,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 </div>
-<div id="46e6276a" class="cell" data-execution_count="21">
+<div id="25f674cc" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(avo_houses,</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"price"</span>, </span>
@@ -988,7 +990,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 <p>In San Diego, San Francisco, and Sacramento avocado sales volume is pretty similar, but in Los Angeles the avocado sales volume is much higher. Los Angeles also is in the middle range for house prices, so it is unclear that avocado sales prices is correlated with home prices.</p>
-<div id="7ad04e5f" class="cell" data-execution_count="22">
+<div id="4f1f18ae" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(avo_houses,</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>p9.aes(</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> <span class="st">"price"</span>, </span>
