@@ -1,0 +1,117 @@
+---
+title: "Practice Assignment 3.1"
+format: 
+    html:
+        embed-resources: true
+---
+
+```{python}
+import numpy as np
+import pandas as pd
+from sys import exit
+from palmerpenguins import load_penguins
+from plotnine import ggplot, aes, geom_point, geom_bar
+```
+
+## 1. Fill in the necessary code to write a function called `times_seven()`. The function should take a single argument (`x`) and multiply the input by 7.
+
+• This function should check that the argument is numeric.
+• This function should also excitedly announce (print) *“I love sevens!”* if the argument to the function is a 7.
+
+```{python}
+def times_seven(x):
+
+  if isinstance(x, str):
+    exit("Please input a numeric number")
+
+  if x==7:
+    print("I love sevens!")
+
+  return x*7
+```
+
+## 2. Write and run some *unit tests* for your `times_seven` function.  What happens if the input to the function is `[1, 3, 5, 7]`?
+
+```{python}
+times_seven(7)
+```
+
+```{python}
+#times_seven("sadie")
+```
+
+```{python}
+times_seven(4)
+```
+
+```{python}
+times_seven([1,3,5,7])
+```
+
+When the input of the function is the list [1,3,5,7], the function returns a list containing the numbers 1,3,5,7 repeated 7 times in that order. 
+
+## 3. Consider the following function:
+
+```{python}
+def add_or_subtract(first_num, second_num = 2, type = "add"):
+
+  if (type == "add"):
+    res = first_num + second_num
+  elif (type == "subtract"):
+    res = first_num - second_num
+  else:
+    exit("Please choose `add` or `subtract` as the type.")
+
+  return res
+```
+
+Without running the code, predict if the following will produce:
+
+a. 1
+When type = "add", function will produce 1 when first_num=-(second_num)+1. ie if second_num=2, will produce 1 when first_num=-1
+When type="subtract", function will produce 1 when the difference between first_num and second_num equals 1 (first_num is 1 larger than second_num)
+
+b. -1
+When type="add", function will produce 1 when first_num=-(second_num)-1. ie if second_num=2, will produce 1 when first_num=-3
+When type="subtract", function will produce 1 when the difference between second_num and first_num equals 1 (first_num is 1 smaller than second_num)
+
+c. 30
+When type="add", function will produce 30 when the sum of the two numbers equals 30
+When type="subtract", function will produce 30 when the difference between first_num and second_num equals 30
+
+d. An error defined by the function add_or_subtract()
+When a operation is chosen that is not adding or subtracting. 
+
+e. An error defined in a different function, which is called inside the add_or_subtract() function
+This will occur when first_num or second_num is not a numeric type. 
+
+```{python}
+add_or_subtract(5, 6, type = "subtract")
+
+#add_or_subtract("orange")
+
+#add_or_subtract(5, 6, type = "multiply")
+```
+
+## 4. Consider the following code:
+```{python}
+first_num  = 5
+second_num = 3
+
+result = 8
+
+result = add_or_subtract(first_num, second_num = 4)
+
+result_2 = add_or_subtract(first_num)
+```
+
+In your Global Environment, what is the value of...
+
+a. `first_num` = 5
+
+b. `second_num` = 3
+
+c. `result` = 9
+
+d. `result_2` = 8 
+
