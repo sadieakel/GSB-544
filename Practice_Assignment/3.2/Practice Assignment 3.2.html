@@ -2202,13 +2202,13 @@ vertical-align: -.125em;
 
 <section id="load-the-penguins-dataset-from-the-palmerpenguins-library-as-well-as-any-other-libraries-you-need." class="level2">
 <h2 class="anchored" data-anchor-id="load-the-penguins-dataset-from-the-palmerpenguins-library-as-well-as-any-other-libraries-you-need.">0: Load the penguins dataset from the palmerpenguins library, as well as any other libraries you need.</h2>
-<div id="3b0850b2" class="cell" data-execution_count="1">
+<div id="c6b8d401" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sys <span class="im">import</span> exit</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> palmerpenguins <span class="im">import</span> load_penguins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="e4ac822e" class="cell" data-execution_count="2">
+<div id="20948466" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>penguins<span class="op">=</span>load_penguins()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -2220,29 +2220,28 @@ vertical-align: -.125em;
 <li>“Average Adelie:” Any Adelie penguins that do not fall into either category.</li>
 <li>“Other”: Any penguins that do not fall into any of the categories.</li>
 </ul>
-<div id="e39aaf88" class="cell" data-execution_count="3">
+<div id="db5874ce" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> penguin_type(x):</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x[<span class="st">&quot;bill_length_mm&quot;</span>] <span class="op">*</span> x[<span class="st">&quot;bill_depth_mm&quot;</span>] <span class="op">&gt;</span> <span class="dv">800</span>:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x[<span class="st">&quot;sex&quot;</span>]<span class="op">==</span><span class="st">&quot;male&quot;</span>) <span class="op">&amp;</span> (x[<span class="st">&quot;bill_length_mm&quot;</span>] <span class="op">*</span> x[<span class="st">&quot;bill_depth_mm&quot;</span>] <span class="op">&gt;</span> <span class="dv">800</span>):</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;Big Mouth Billy&quot;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> (x[<span class="st">&quot;sex&quot;</span>] <span class="op">==</span> <span class="st">&quot;female&quot;</span>) <span class="kw">and</span> (x[<span class="st">&quot;flipper_length_mm&quot;</span>] <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">*</span> x[<span class="st">&quot;body_mass_g&quot;</span>]):</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> (x[<span class="st">&quot;sex&quot;</span>] <span class="op">==</span> <span class="st">&quot;female&quot;</span>) <span class="kw">and</span> (x[<span class="st">&quot;flipper_length_mm&quot;</span>] <span class="op">&lt;</span> (<span class="fl">0.05</span> <span class="op">*</span> x[<span class="st">&quot;body_mass_g&quot;</span>])):</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;Dainty Daisy&quot;</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> x[<span class="st">&quot;species&quot;</span>] <span class="op">==</span> <span class="st">&quot;Adelie&quot;</span>:</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;Average Adelie&quot;</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;Other&quot;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>NEED TO GO OVER WHAT THE .LOC FUNCTION DOES!!!</p>
 </section>
 <section id="use-an-iterable-function-to-create-a-new-variable-called-category_name-that-adds-these-labels." class="level2">
 <h2 class="anchored" data-anchor-id="use-an-iterable-function-to-create-a-new-variable-called-category_name-that-adds-these-labels.">2: Use an iterable function to create a new variable called <code>category_name</code> that adds these labels.</h2>
-<div id="912e9fff" class="cell" data-execution_count="4">
+<div id="a4d76bfe" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_category(penguins):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    penguins[<span class="st">&quot;category_name&quot;</span>] <span class="op">=</span> penguins.<span class="bu">apply</span>(penguin_type, axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> penguins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="5f136cff" class="cell" data-execution_count="5">
+<div id="67fd1418" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>add_category(penguins)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
 
@@ -2392,7 +2391,7 @@ vertical-align: -.125em;
 <td>3775.0</td>
 <td>female</td>
 <td>2009</td>
-<td>Big Mouth Billy</td>
+<td>Other</td>
 </tr>
 </tbody>
 </table>
@@ -2404,14 +2403,14 @@ vertical-align: -.125em;
 </section>
 <section id="run-the-following-code-to-find-the-counts-for-each-type." class="level2">
 <h2 class="anchored" data-anchor-id="run-the-following-code-to-find-the-counts-for-each-type.">3: Run the following code to find the counts for each type.</h2>
-<div id="08b6ce1d" class="cell" data-execution_count="6">
+<div id="6bdbc4d7" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>penguins.value_counts(<span class="st">&quot;category_name&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>category_name
-Average Adelie     126
-Big Mouth Billy     92
-Other               67
-Dainty Daisy        59
+Average Adelie     127
+Other               84
+Big Mouth Billy     71
+Dainty Daisy        62
 Name: count, dtype: int64</code></pre>
 </div>
 </div>

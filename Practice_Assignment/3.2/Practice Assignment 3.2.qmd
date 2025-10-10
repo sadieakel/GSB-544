@@ -26,9 +26,9 @@ penguins=load_penguins()
 
 ```{python}
 def penguin_type(x):
-    if x["bill_length_mm"] * x["bill_depth_mm"] > 800:
+    if (x["sex"]=="male") & (x["bill_length_mm"] * x["bill_depth_mm"] > 800):
         return "Big Mouth Billy"
-    elif (x["sex"] == "female") and (x["flipper_length_mm"] < 0.05 * x["body_mass_g"]):
+    elif (x["sex"] == "female") and (x["flipper_length_mm"] < (0.05 * x["body_mass_g"])):
         return "Dainty Daisy"
     elif x["species"] == "Adelie":
         return "Average Adelie"
@@ -36,7 +36,6 @@ def penguin_type(x):
         return "Other"
 ```
 
-NEED TO GO OVER WHAT THE .LOC FUNCTION DOES!!! 
 
 ## 2: Use an iterable function to create a new variable called `category_name` that adds these labels.
 
