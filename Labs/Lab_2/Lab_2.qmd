@@ -1,6 +1,8 @@
 ---
 title: "Lab 2"
-format: html
+format: 
+  html:
+    embed-resources: true
 ---
 ## 0: Import of Data, Calling Packages
 ```{python}
