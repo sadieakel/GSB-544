@@ -1,0 +1,139 @@
+---
+title: "Webscraping Notes"
+format: html
+---
+
+```{python}
+import pandas as pd
+```
+
+
+```{python}
+import requests
+
+url = "https://tasty.p.rapidapi.com/recipes/list" #this is the endpoint that you are getting info from 
+
+querystring = {"from":"0","size":"20","q":"daikon"}
+#this info comes from the Tasty API and gives what you 
+
+headers = {
+    "X-RapidAPI-Key": "9d224792admshacbb1b5b61365fbp161a09jsn8429ec576154",
+    "X-RapidAPI-Host": "tasty.p.rapidapi.com"
+}
+
+response = requests.get(url, headers=headers, params=querystring) #this wont look pretty
+
+print(response.json()) #this will look prettier 
+```
+
+Example of layers in web scraping: 
+recipe 1: 
+- recipe 1
+    - ingredient 1 
+    - ingredient 2
+- recipe 2
+    - ingredient 1 
+        - 10 mg
+        - red
+    - ingredient 2
+        - 2 cups 
+        - brown 
+    - description 
+
+The webscraping results/json are a way of condensing all the data that you may need and then you can specify 
+
+```{python}
+daikon_recipes = pd.json_normalize(response.json(), "results")
+daikon_recipes
+```
+
+How to: 
+1. open page source 
+2. search "<table" and then you can index which table you want in pandas/python
+
+Beautiful soup: 
+
+```{python}
+import requests
+response = requests.get("https://statistics.calpoly.edu/content/directory")
+```
+
+```{python}
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(response.content, "html.parser")
+```
+
+
+```{python}
+results = soup.find(id="Faculty")
+print(results.prettify())
+```
+
+
+```{python}
+results.find_all("element name", class_="class name")
+```
+
+
+```{python}
+refined_results = results.find_all("class name", string="search text")
+```
+
+
+```{python}
+tables = soup.find_all("table")
+len(tables)
+```
+
+you can also see the following in the page source: 
+```{python}
+table = tables[1]
+table
+```
+
+
+```{python}
+# initialize an empty list
+rows = []
+
+# iterate over all rows in the faculty table
+for faculty in table.find_all("tr")[1:]: #this just is bc you know the first one is a header and not a faculty 
+
+    # Get all the cells (<td>) in the row.
+    cells = faculty.find_all("td")
+
+    # The information we need is the text between tags.
+
+    # Find the the name of the faculty in cell[0]
+    # which for most faculty is contained in the <strong> tag
+    name_tag = cells[0].find("strong") or cells[0]
+    name = name_tag.text
+
+    # Find the office of the faculty in cell[1]
+    # which for most faculty is contained in the <a> tag
+    link = cells[1].find("a") or cells[1]
+    office = link.text
+
+    # Find the email of the faculty in cell[3]
+    # which for most faculty is contained in the <a> tag
+    email_tag = cells[3].find("a") or cells[3]
+    email = email_tag.text
+
+    phone_tag = cells[2].find("p") or cells[2]
+    phone= phone_tag.text
+
+    # Append this data.
+    rows.append({
+        "name": name,
+        "office": office,
+        "email": email,
+        "phone": phone
+    })
+```
+
+now you can convert to a dataframe: 
+```{python}
+df=pd.DataFrame(rows)
+```
+
+/robots.txt will tell you what you are allowed to/not allowed to scrape. 
