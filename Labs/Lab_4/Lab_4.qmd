@@ -1,0 +1,229 @@
+---
+title: "Lab 4"
+format: 
+    html:
+        embed-resources: true
+---
+
+## 1: 
+```{python}
+import pandas as pd
+import re
+```
+
+```{python}
+import requests
+URL = "https://tastesbetterfromscratch.com/meal-plan-207/"
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+
+response = requests.get(URL, headers=HEADERS)
+response
+```
+
+
+```{python}
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(response.content, "html.parser")
+```
+
+
+```{python}
+# initialize an empty list
+rows = []
+
+for week in soup.find_all("p", {"class": "has-text-align-left"}):
+    # Find the course name tag
+    day_name = week.find("strong")
+    day = day_name.get_text(strip = True)
+
+    recipe_name = week.find("a")
+    recipe = recipe_name.get_text(strip = True)
+
+    recipe_link = recipe_name.get("href")
+
+    recipe_price=re.findall(r"\$.{2,5}(?=</p>)",str(week))
+    price=recipe_price[0]
+
+    rows.append({
+        "day": day,
+        "recipe": recipe,
+        "recipe_link": recipe_link,
+        "price": price
+    })
+```
+
+
+```{python}
+df=pd.DataFrame(rows)
+df["day"] = df["day"].apply(lambda x: x.replace(":", ""))
+```
+
+
+## 2: 
+
+```{python}
+#| echo: false
+
+key="9d224792admshacbb1b5b61365fbp161a09jsn8429ec576154"
+```
+
+
+```{python}
+
+url = "https://tasty.p.rapidapi.com/recipes/list" #this is the endpoint that you are getting info from 
+
+querystring = {"from":"0","size":"20","q":"Salmon Tacos"}
+
+headers = {
+    "X-RapidAPI-Key": key,
+    "X-RapidAPI-Host": "tasty.p.rapidapi.com"
+}
+
+response2 = requests.get(url, headers=headers, params=querystring) #this wont look pretty
+
+salmon_recipes = pd.json_normalize(response2.json(), "results")
+
+salmon=salmon_recipes[["canonical_id", "name", "num_servings", "nutrition.calories", "nutrition.carbohydrates", "nutrition.fat", "nutrition.fiber", "nutrition.protein", "nutrition.sugar", "price.portion", "price.total"]]
+
+salmon
+```
+
+## 3: 
+```{python}
+from sys import exit 
+
+def get_mealplan_data(x): 
+    if x<=100 or x>=210:
+        exit("enter a valid number")
+    x=str(x)
+    URL2 = "https://tastesbetterfromscratch.com/meal-plan-" + x + "/"
+    HEADERS2 = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+
+    response2 = requests.get(URL2, headers=HEADERS2)
+    soup2 = BeautifulSoup(response2.content, "html.parser")
+
+
+    rows2 = []
+
+    for week in soup2.find_all("p", {"class": "has-text-align-left"}):
+        # Find the course name tag
+        day_name = week.find("strong")
+        day = day_name.get_text(strip = True)
+
+        recipe_name = week.find("a")
+        recipe = recipe_name.get_text(strip = True)
+
+        recipe_link = recipe_name.get("href")
+
+        recipe_price=re.findall(r"\$.{2,5}(?=</p>)",str(week))
+        price=recipe_price[0]
+
+        rows2.append({
+            "day": day,
+            "recipe": recipe,
+            "recipe_link": recipe_link,
+            "price": price
+        })
+
+    df2=pd.DataFrame(rows2)
+    df2["day"] = df2["day"].apply(lambda x: x.replace(":", ""))
+    
+    def tasty_recipe(y):
+        url = "https://tasty.p.rapidapi.com/recipes/list" #this is the endpoint that you are getting info from 
+
+        querystring = {"from":"0","size":"20","q":y}
+
+        headers = {
+            "X-RapidAPI-Key": "9d224792admshacbb1b5b61365fbp161a09jsn8429ec576154",
+            "X-RapidAPI-Host": "tasty.p.rapidapi.com"
+        }
+
+        response3 = requests.get(url, headers=headers, params=querystring) #this wont look pretty
+
+        y_recipes = pd.json_normalize(response3.json(), "results")
+        #print(y_recipes)
+        #y_recipes=y_recipes[["canonical_id", "name", "num_servings", "nutrition.calories", "nutrition.carbohydrates", "nutrition.fat", "nutrition.fiber", "nutrition.protein", "nutrition.sugar", "price.portion", "price.total"]]
+        
+        if y_recipes.empty:
+            return y_recipes
+        else: 
+            y_recipes=y_recipes[["canonical_id", "name", "num_servings", "nutrition.calories", "nutrition.carbohydrates", "nutrition.fat", "nutrition.fiber", "nutrition.protein", "nutrition.sugar", "price.portion", "price.total"]]
+            y_recipes.loc[:, "recipe"] = y
+            return y_recipes
+    
+    tasty_rec_total = pd.DataFrame()
+
+    for i in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]:
+        y = df2.loc[df2["day"] == i, "recipe"].iloc[0]
+        tasty_rec_total=pd.concat([tasty_rec_total,tasty_recipe(y)])          
+
+# single left merge back onto your meal plan
+    total_df = df2.merge(tasty_rec_total, on="recipe", how="left")
+
+    return total_df
+```
+
+```{python}
+week202=get_mealplan_data(202)
+week202.head()
+```
+
+## 4: 
+```{python}
+import numpy as np 
+
+#this is my list of "common" meats to check in each recipe title 
+meats=np.array(["chicken", "beef", "steak", "turkey", "salmon", "pork", "meat", "lamb", "fish", "shrimp", "seafood", "salmon"])
+```
+
+```{python}
+import re
+from numpy import isin 
+
+def is_veg(x): 
+    x=x.lower()
+    recipe_list=np.array(x.split(" "))
+    is_vegetarian=isin(recipe_list, meats)
+    if is_vegetarian.sum()==0:
+        return "Vegetarian"
+    else: 
+        return "Contains meat"
+```
+
+```{python}
+is_veg("sadie chicken salad")
+```
+
+```{python}
+week202['name'] = week202['name'].fillna('No recipe found')
+week202['vegetarian']=week202["name"].apply(is_veg)
+week202.head()
+week202[["name", "vegetarian"]].head()
+```
+
+
+## 5: 
+```{python}
+week202_cleaned=week202.dropna()
+week202_cleaned.head()
+```
+
+```{python}
+import plotnine as p9
+
+(p9.ggplot(week202_cleaned, p9.aes(x = "vegetarian", y = "nutrition.protein", fill = "vegetarian"))
++ p9.geom_boxplot()
+)
+```
+
+This visualization shows that for recipes on Tasty's website, there are a large range of vegetarian options for almost every day of the week except for Friday's meal. Additionally, Tuesday's vegetarian options have a protein content comperable to the meat version. 
+
+```{python}
+import plotnine as p9
+
+(p9.ggplot(week202_cleaned, p9.aes(x = "nutrition.protein", y = "nutrition.fat", color = "vegetarian"))
++ p9.geom_point()
+)
+```
+
+In this visualization we can see that there are more vegetarian meal options than meals that contain meat in this week's mealplan. Additionally, for recipes with the same protein content, recipes containing meat tend to have a lower fat content than vegetarian recipes. 

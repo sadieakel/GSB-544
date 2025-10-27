@@ -1,0 +1,55 @@
+---
+title: "Machine Learning Notes"
+format: html
+---
+
+
+```{python}
+import sklearn
+import pandas as pd
+import numpy as np
+```
+
+```{python}
+dat = pd.read_csv("https://www.dropbox.com/scl/fi/yf8t1x0uvrln93dzi6xd8/housing_small.csv?rlkey=uen32y937kqarrjra0v6jaez4&dl=1")
+```
+
+
+```{python}
+y = dat['SalePrice']
+X = dat[['Gr Liv Area', 'Bedroom AbvGr', 'Neighborhood_NAmes', 'Neighborhood_NWAmes']]
+```
+
+
+```{python}
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
+
+knn = KNeighborsRegressor()
+lr = LinearRegression()
+dt = DecisionTreeRegressor()
+```
+
+
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+```
+
+How many rows are in the datasets X_train and X_test?
+
+```{python}
+X_train.info()
+X_test.info()
+```
+
+75 rows in training data and 25 in testing data 
+
+How many elements are in the series y_train and y_test?
+
+
+What would you change to increase the number of rows in X_train?
+
+Run the code again, and re-examine the objects. Do they contain the exact same data as before? Why or why not?
