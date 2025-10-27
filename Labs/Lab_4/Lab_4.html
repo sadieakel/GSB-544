@@ -2202,26 +2202,26 @@ vertical-align: -.125em;
 
 <section id="section" class="level2">
 <h2 class="anchored" data-anchor-id="section">1:</h2>
-<div id="ba594d87" class="cell" data-execution_count="1">
+<div id="0d68f38c" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="4d3671d8" class="cell" data-execution_count="2">
+<div id="7156ca40" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>URL <span class="op">=</span> <span class="st">&quot;https://tastesbetterfromscratch.com/meal-plan-207/&quot;</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>HEADERS <span class="op">=</span> {<span class="st">&quot;User-Agent&quot;</span>: <span class="st">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64)&quot;</span>}</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(URL, headers<span class="op">=</span>HEADERS)</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="34">
 <pre><code>&lt;Response [200]&gt;</code></pre>
 </div>
 </div>
-<div id="4eb599ec" class="cell" data-execution_count="3">
+<div id="e579bcbd" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>soup <span class="op">=</span> BeautifulSoup(response.content, <span class="st">&quot;html.parser&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="d7d81e2e" class="cell" data-execution_count="4">
+<div id="94644dc7" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize an empty list</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> []</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2245,14 +2245,14 @@ vertical-align: -.125em;
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;price&quot;</span>: price</span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="22ff9842" class="cell" data-execution_count="5">
+<div id="668530aa" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>pd.DataFrame(rows)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;day&quot;</span>] <span class="op">=</span> df[<span class="st">&quot;day&quot;</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x.replace(<span class="st">&quot;:&quot;</span>, <span class="st">&quot;&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="section-1" class="level2">
 <h2 class="anchored" data-anchor-id="section-1">2:</h2>
-<div id="b9aa0f89" class="cell" data-execution_count="7">
+<div id="7ba723b7" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">&quot;https://tasty.p.rapidapi.com/recipes/list&quot;</span> <span class="co">#this is the endpoint that you are getting info from </span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>querystring <span class="op">=</span> {<span class="st">&quot;from&quot;</span>:<span class="st">&quot;0&quot;</span>,<span class="st">&quot;size&quot;</span>:<span class="st">&quot;20&quot;</span>,<span class="st">&quot;q&quot;</span>:<span class="st">&quot;Salmon Tacos&quot;</span>}</span>
@@ -2269,7 +2269,7 @@ vertical-align: -.125em;
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>salmon<span class="op">=</span>salmon_recipes[[<span class="st">&quot;canonical_id&quot;</span>, <span class="st">&quot;name&quot;</span>, <span class="st">&quot;num_servings&quot;</span>, <span class="st">&quot;nutrition.calories&quot;</span>, <span class="st">&quot;nutrition.carbohydrates&quot;</span>, <span class="st">&quot;nutrition.fat&quot;</span>, <span class="st">&quot;nutrition.fiber&quot;</span>, <span class="st">&quot;nutrition.protein&quot;</span>, <span class="st">&quot;nutrition.sugar&quot;</span>, <span class="st">&quot;price.portion&quot;</span>, <span class="st">&quot;price.total&quot;</span>]]</span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>salmon</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="39">
 <div>
 
 
@@ -2356,7 +2356,7 @@ vertical-align: -.125em;
 </section>
 <section id="section-2" class="level2">
 <h2 class="anchored" data-anchor-id="section-2">3:</h2>
-<div id="e9b07f4a" class="cell" data-execution_count="8">
+<div id="7094bcb7" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sys <span class="im">import</span> exit </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_mealplan_data(x): </span>
@@ -2429,10 +2429,10 @@ vertical-align: -.125em;
 <span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="f29caec2" class="cell" data-execution_count="9">
+<div id="7f4d5815" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>week202<span class="op">=</span>get_mealplan_data(<span class="dv">202</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>week202.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="25">
+<div class="cell-output cell-output-display" data-execution_count="41">
 <div>
 
 
@@ -2557,13 +2557,13 @@ vertical-align: -.125em;
 </section>
 <section id="section-3" class="level2">
 <h2 class="anchored" data-anchor-id="section-3">4:</h2>
-<div id="a15ffbdb" class="cell" data-execution_count="10">
+<div id="9767a80d" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#this is my list of &quot;common&quot; meats to check in each recipe title </span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>meats<span class="op">=</span>np.array([<span class="st">&quot;chicken&quot;</span>, <span class="st">&quot;beef&quot;</span>, <span class="st">&quot;steak&quot;</span>, <span class="st">&quot;turkey&quot;</span>, <span class="st">&quot;salmon&quot;</span>, <span class="st">&quot;pork&quot;</span>, <span class="st">&quot;meat&quot;</span>, <span class="st">&quot;lamb&quot;</span>, <span class="st">&quot;fish&quot;</span>, <span class="st">&quot;shrimp&quot;</span>, <span class="st">&quot;seafood&quot;</span>, <span class="st">&quot;salmon&quot;</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="7cdefb73" class="cell" data-execution_count="11">
+<div id="e5d5b7ae" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> isin </span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2576,18 +2576,18 @@ vertical-align: -.125em;
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>: </span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;Contains meat&quot;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="81aac182" class="cell" data-execution_count="12">
+<div id="8bc77a0e" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>is_veg(<span class="st">&quot;sadie chicken salad&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="28">
+<div class="cell-output cell-output-display" data-execution_count="44">
 <pre><code>&#39;Contains meat&#39;</code></pre>
 </div>
 </div>
-<div id="f3581474" class="cell" data-execution_count="13">
+<div id="d5436e62" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>week202[<span class="st">&#39;name&#39;</span>] <span class="op">=</span> week202[<span class="st">&#39;name&#39;</span>].fillna(<span class="st">&#39;No recipe found&#39;</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>week202[<span class="st">&#39;vegetarian&#39;</span>]<span class="op">=</span>week202[<span class="st">&quot;name&quot;</span>].<span class="bu">apply</span>(is_veg)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>week202.head()</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>week202[[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;vegetarian&quot;</span>]].head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
+<div class="cell-output cell-output-display" data-execution_count="45">
 <div>
 
 
@@ -2634,10 +2634,10 @@ vertical-align: -.125em;
 </section>
 <section id="section-4" class="level2">
 <h2 class="anchored" data-anchor-id="section-4">5:</h2>
-<div id="6f625614" class="cell" data-execution_count="14">
+<div id="4d335252" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>week202_cleaned<span class="op">=</span>week202.dropna()</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>week202_cleaned.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="30">
+<div class="cell-output cell-output-display" data-execution_count="46">
 <div>
 
 
@@ -2765,7 +2765,7 @@ vertical-align: -.125em;
 </div>
 </div>
 </div>
-<div id="8a13a57d" class="cell" data-execution_count="15">
+<div id="d594c165" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotnine <span class="im">as</span> p9</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(week202_cleaned, p9.aes(x <span class="op">=</span> <span class="st">&quot;vegetarian&quot;</span>, y <span class="op">=</span> <span class="st">&quot;nutrition.protein&quot;</span>, fill <span class="op">=</span> <span class="st">&quot;vegetarian&quot;</span>))</span>
@@ -2780,7 +2780,7 @@ vertical-align: -.125em;
 </div>
 </div>
 <p>This visualization shows that for recipes on Tasty’s website, there are a large range of vegetarian options for almost every day of the week except for Friday’s meal. Additionally, Tuesday’s vegetarian options have a protein content comperable to the meat version.</p>
-<div id="775a1698" class="cell" data-execution_count="16">
+<div id="60c74931" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotnine <span class="im">as</span> p9</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>(p9.ggplot(week202_cleaned, p9.aes(x <span class="op">=</span> <span class="st">&quot;nutrition.protein&quot;</span>, y <span class="op">=</span> <span class="st">&quot;nutrition.fat&quot;</span>, color <span class="op">=</span> <span class="st">&quot;vegetarian&quot;</span>))</span>
