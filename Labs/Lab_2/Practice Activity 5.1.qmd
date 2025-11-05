@@ -1,0 +1,130 @@
+---
+title: "Practice Activity 5.1"
+format: 
+    html:
+        embed-resources: true
+---
+
+Import the Palmer Penguins dataset and print out the first few rows.
+
+Suppose we want to predict bill_depth_mm using the other variables in the dataset.
+```{python}
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+```
+
+```{python}
+from palmerpenguins import load_penguins
+penguins=load_penguins()
+```
+
+
+```{python}
+lr = LinearRegression()
+```
+
+Which variables would we need to dummify?
+We would need to dummify the sex, island, and species variables. 
+
+```{python}
+enc=OneHotEncoder(handle_unknown='ignore')
+
+enc_fitted=enc.fit(penguins[['species']]) #only dummifying/transforming the one desired column 
+enc_fitted.transform(penguins[['species']]).todense() #note that this "spits out" a numpy matrix and not a dataframe 
+```
+
+```{python}
+penguins=penguins.dropna()
+```
+
+Let's use bill_length_mm to predict bill_depth_mm. Prepare your data and fit the following models on the entire dataset:
+
+Simple linear regression (e.g. straight-line) model
+```{python}
+y = penguins['bill_depth_mm'] #this is a series
+X = penguins[['bill_length_mm']] #this is a dataframe with one column 
+```
+
+```{python}
+lr_fit = lr.fit(X, y)
+lr_coef=lr_fit.coef_
+lr_coef
+penguins['model1_pred'] = lr_fit.predict(X)
+```
+
+Quadratic (degree 2 polynomial) model
+```{python}
+X["bill_length_sq"] = X["bill_length_mm"]**2
+```
+
+```{python}
+lr_fit2 = lr.fit(X, y)
+lr_coef2=lr_fit.coef_
+lr_coef2
+penguins['model2_pred'] = lr_fit.predict(X)
+```
+
+Cubic (degree 3 polynomial) model
+```{python}
+X["bill_length_cubed"] = X["bill_length_mm"]**3
+```
+
+```{python}
+lr_fit3 = lr.fit(X, y)
+lr_coef3=lr_fit.coef_
+lr_coef3
+penguins['model3_pred'] = lr_fit.predict(X)
+```
+
+Degree 10 polynomial model
+
+Make predictions for each model and plot your fitted models on the scatterplot.
+
+```{python}
+import plotnine as p9
+```
+
+```{python}
+from plotnine import ggplot, aes, geom_point, geom_line, labs, theme_minimal
+import pandas as pd
+
+# Reshape dataframe to long format for ggplot-style plotting
+penguins_long = penguins.melt(
+    id_vars=['bill_length_mm', 'bill_depth_mm'],
+    value_vars=['model1_pred', 'model2_pred', 'model3_pred', 'model10_pred'],
+    var_name='model',
+    value_name='predicted'
+)
+
+# Rename model labels for nicer legend
+df_long['model'] = df_long['model'].replace({
+    'model1_pred': 'Degree 1',
+    'model2_pred': 'Degree 2',
+    'model3_pred': 'Degree 3',
+    'model10_pred': 'Degree 10'
+})
+
+# Create the ggplot
+p = (
+    ggplot(df_long, aes(x='bill_length_mm', y='bill_depth_mm'))
+    + geom_point(color='gray', alpha=0.6)
+    + geom_line(aes(y='predicted', color='model'), size=1)
+    + labs(
+        title='Polynomial Regression Fits for Bill Depth vs Bill Length',
+        x='Bill length (mm)',
+        y='Bill depth (mm)',
+        color='Model'
+    )
+    + theme_minimal()
+)
+
+print(p)
+
+```
+
+Are any of the models above underfitting the data? If so, which ones and how can you tell?
+Are any of thhe models above overfitting the data? If so, which ones and how can you tell?
+Which of the above models do you think fits the data best and why?

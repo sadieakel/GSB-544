@@ -1,0 +1,32 @@
+---
+title: "Linear Regression Notes"
+format: html
+---
+Dummifying: 
+
+```{python}
+enc=OneHotEncoder(handle_unknown='ignore')
+
+enc_fitted=enc.fit(penguins[['species']]) #only dummifying/transforming the one desired column 
+enc_fitted.transform(penguins[['species']]).todense() #note that this "spits out" a numpy matrix and not a dataframe 
+```
+
+
+
+Standardizing: 
+
+```{python}
+from sklearn.preprocessing import StandardScaler 
+scaler=StandardScaler()
+```
+
+```{python}
+scaler_fitted=scaler.fit(penguins[['bill_length_mm']]) #looks at this column and asks, what is the mean and what is the standard deviation 
+scaler_fitted.transform(penguins[['bill_length_mm']])
+```
+
+This essentially measures how many SDs above and or below the mean 
+
+
+** NOTE FOR A LOT OF THESE UPCOMING PROBLEMS YOU WILL NEED TO LOOK UP SK LEARN***
+

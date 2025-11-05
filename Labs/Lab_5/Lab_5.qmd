@@ -1,0 +1,482 @@
+---
+title: "Lab 5"
+format: 
+    html:
+        embed-resources: true
+---
+
+## Part 1: Data Exploration
+
+### 1: Data display and summary 
+
+```{python}
+import pandas as pd 
+import numpy as np
+```
+
+```{python}
+insurance = pd.read_csv("~/Desktop/GSB 544/Labs/Lab_5/insurance_costs_1.csv", sep=',')
+```
+
+```{python}
+insurance.head()
+```
+
+```{python}
+insurance.info()
+```
+
+### 2: Data cleaning 
+```{python}
+insurance=insurance.dropna()
+```
+
+### 3: Plots to visualize data 
+```{python}
+import plotnine as p9 
+```
+
+```{python}
+(p9.ggplot(insurance,
+p9.aes(
+  x = "age",
+  y = "charges",
+  color = "smoker"
+))
++ p9.geom_point()
+)
+```
+
+This plot suggests that as age increases, insurance charges additionally increase. It also suggests the existence of three distinct y intercepts/groups within the data, the first being smokers with high charges, the second being a mix of smokers and non smokers with medium charges, and the last is non smokers with low charges. We will investigate other variables to see what may further define these groups. 
+
+```{python}
+(p9.ggplot(insurance,
+p9.aes(
+  x = "bmi",
+  y = "charges",
+  color = "smoker"
+))
++ p9.geom_point()
+)
+```
+
+BMI does not appear to have a signfiicant linear relationship to insurance charges for non-smokers, but it appears to have a linear relationship to charges for smokers. The scatterplot suggests that a higher BMI corresponds to higher insurance charges for smokers. 
+
+```{python}
+(p9.ggplot(insurance,
+p9.aes(
+  x = "region",
+  y = "charges",
+  fill="sex"
+))
++ p9.geom_boxplot()
+)
+```
+
+This graph shows that females and males have similar average charges within each region. Additionally, the average insurance charge is similar between regions. The Southwest region appears to have a larger range in charges than other regions. 
+
+## Part 2: Simple Linear Models
+
+### 1: A simple linear model to predict the insurance charges from the beneficiary’s age
+```{python}
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+```
+
+```{python}
+lr = LinearRegression()
+```
+
+```{python}
+y=insurance['charges']
+X=insurance[['age']]
+```
+
+```{python}
+lr_fit = lr.fit(X, y)
+lr_coef=lr_fit.coef_
+lr_int=lr_fit.intercept_
+lr_coef, lr_int
+```
+
+The x coefficient is 228.799 and the y intercept is 3611.759. This means that for a person of age 0, we expect their insurance charges to be $288.80. This number does not make sense in context as the youngest age we have data collected for is 18, so this model does not fit/predict the insurance costs for newborns. The x coefficient 288.799 suggests that expected insurance charges increase by $288.80 as age increases by one year. 
+
+```{python}
+X_new = pd.DataFrame()
+X_new["age"] = np.linspace(18, 65, num=10000)
+y_new_ = pd.Series(
+    lr_fit.predict(X_new),
+    index=X_new["age"]
+)
+
+insurance.plot.scatter(x="age", y="charges")
+y_new_.plot.line(c = "orange");
+```
+
+```{python}
+from sklearn.metrics import mean_squared_error, root_mean_squared_error, mean_absolute_error, r2_score
+
+mean_squared_error(insurance['charges'], lr_fit.predict(X)), r2_score(insurance['charges'], lr_fit.predict(X))
+```
+
+The average squared distance from points to the regression line is 126739267.91026388. 
+
+The R^2 value of this model is 0.09938. This means that 9.938% of total variablilty in insurance charges can be explained by its linear relationship to age. Thus, age alone does not describe a significant amount of variability in insurance charges. 
+
+### 2: Expanding the model to also include the variable sex 
+```{python}
+from sklearn.preprocessing import OneHotEncoder
+enc=OneHotEncoder(handle_unknown='ignore')
+
+malefemale=enc.fit(insurance[['sex']])
+malefemale=malefemale.transform(insurance[['sex']]).todense()
+insurance["is_female"]=pd.DataFrame(malefemale)[0]
+
+smokes=enc.fit(insurance[['smoker']])
+smokes=smokes.transform(insurance[['smoker']]).todense()
+insurance["is_smoker"]=pd.DataFrame(smokes)[1]
+```
+
+```{python}
+X2=insurance[['age', 'is_female']]
+X3=insurance[['age', 'is_smoker']]
+```
+
+```{python}
+lr_female = LinearRegression()
+lr_female.fit(X2, y)
+lr_female_coef=lr_female.coef_
+lr_female_int=lr_female.intercept_
+lr_female_coef, lr_female_int
+```
+
+```{python}
+(p9.ggplot(insurance,
+p9.aes(
+  x = "age",
+  y = "charges"
+))
++ p9.geom_point()
++ p9.geom_abline(intercept=3965.1649365068024, slope=228.42586236, color='red')
++ p9.geom_abline(intercept=3965.1649365068024-649.83258997, slope=228.42586236, color='orange')
+)
+```
+
+On average, we expect females to have lower charges than males by $649.83, while holding age constant. 
+
+### 3: Exploring a model that uses smoking status instead of sex 
+```{python}
+lr_smoke = LinearRegression()
+lr_smoke.fit(X3, y)
+lr_smoke_coef=lr_smoke.coef_
+lr_smoke_int=lr_smoke.intercept_
+lr_smoke_coef, lr_smoke_int
+```
+
+On average, we expect smokers to have higher charges than non-smokers by 24048.86743795, while holding age constant. 
+
+```{python}
+(p9.ggplot(insurance,
+p9.aes(
+  x = "age",
+  y = "charges"
+))
++ p9.geom_point()
++ p9.geom_abline(intercept=-2166.852295375431, slope=228.42586236, color='red')
++ p9.geom_abline(intercept=-2166.852295375431+24048.86743795, slope=253.14535549, color='orange')
+)
+```
+
+### 4: Comparing models with age and sex vs age and smoking
+
+Comparing the MSE values of the models: 
+```{python}
+mean_squared_error(insurance["charges"], lr_female.predict(X2))
+```
+
+```{python}
+r2_score(insurance['charges'], lr_female.predict(X2))
+```
+
+The MSE of the model containing sex is 126633939.67937087, and the R^2 of this model is 0.10012952499706396. 
+
+```{python}
+mean_squared_error(insurance['charges'], lr_smoke.predict(X3))
+```
+
+```{python}
+r2_score(insurance['charges'], lr_smoke.predict(X3))
+```
+
+The MSE of the model containing sex is 33719831.46524373, and the R^2 of this model is 0.7603842948069404. 
+
+Thus, based on these metrics, the model containing smoking status instead of age has a lower MSE and a higher R^2. Thus, is a better predictor of insurance charges. 
+
+## Part 3: Multiple Linear Models 
+
+### 1: Fitting a model using age and BMI as predictors (no interaction term)
+```{python}
+lr_age_bmi=LinearRegression()
+X4=insurance[['age', 'bmi']]
+lr_age_bmi.fit(X4, y)
+lr_age_bmi_coef=lr_age_bmi.coef_
+lr_age_bmi_int=lr_age_bmi.intercept_
+lr_age_bmi_coef, lr_age_bmi_int
+```
+
+```{python}
+mean_squared_error(insurance["charges"], lr_age_bmi.predict(X4))
+```
+
+```{python}
+r2_score(insurance['charges'], lr_age_bmi.predict(X4))
+```
+
+The MSE and R^2 of this model are smaller than in part 2 q 1, suggesting this model has a better fit. 
+
+### 2: Fitting a model that uses age and age^2 
+```{python}
+X_deg=insurance[['age']]
+X_deg['age_squared']=X_deg['age'] ** 2
+```
+
+```{python}
+lr_age_sq=LinearRegression()
+lr_age_sq.fit(X_deg, y)
+lr_age_sq_coef=lr_age_sq.coef_
+lr_age_sq_int=lr_age_sq.intercept_
+lr_age_sq_coef, lr_age_sq_int
+```
+
+```{python}
+mean_squared_error(insurance["charges"], lr_age_sq.predict(X_deg))
+```
+
+```{python}
+r2_score(insurance['charges'], lr_age_sq.predict(X_deg))
+```
+
+The MSE and R^2 of this model are smaller than in part 2 q 1, but the values are very similar. Considering that this model contains more variables than the model containing only age, I would suggest that the first model is a better model. 
+
+
+### 3: Fitting a polynomial model of degree 4
+
+```{python}
+X_deg['age_cubed']=X_deg['age']**3
+X_deg['age_4']=X_deg['age']**4
+```
+
+```{python}
+lr_age_4=LinearRegression()
+lr_age_4.fit(X_deg, y)
+lr_age_4_coef=lr_age_4.coef_
+lr_age_4_int=lr_age_4.intercept_
+lr_age_4_coef, lr_age_4_int
+```
+
+```{python}
+mean_squared_error(insurance["charges"], lr_age_4.predict(X_deg))
+```
+
+```{python}
+r2_score(insurance['charges'], lr_age_4.predict(X_deg))
+```
+
+The MSE and R^2 of this model are smaller than in part 2 q 1, but the values are very similar. Considering that this model contains more variables than the model containing only age, I would suggest that the first model is a better model. 
+
+
+### 4: Fitting a polynomial model of degree 12
+```{python}
+X_deg['age_5']=X_deg['age']**5
+X_deg['age_6']=X_deg['age']**6
+X_deg['age_7']=X_deg['age']**7
+X_deg['age_8']=X_deg['age']**8
+X_deg['age_9']=X_deg['age']**9
+X_deg['age_10']=X_deg['age']**10
+X_deg['age_11']=X_deg['age']**11
+X_deg['age_12']=X_deg['age']**12
+```
+
+```{python}
+lr_age_12=LinearRegression()
+lr_age_12.fit(X_deg, y)
+lr_age_12_coef=lr_age_12.coef_
+lr_age_12_int=lr_age_12.intercept_
+lr_age_12_coef, lr_age_12_int
+```
+
+```{python}
+mean_squared_error(insurance["charges"], lr_age_12.predict(X_deg))
+```
+
+```{python}
+r2_score(insurance['charges'], lr_age_12.predict(X_deg))
+```
+
+The MSE and R^2 of this model are smaller than in part 2 q 1, but the values are very similar. Considering that this model contains more variables than the model containing only age, I would suggest that the first model is a better model. 
+
+### 5: 
+I would suggest that the model containing age and bmi is the best model in this part of the exploration. The R^2 and MSE values for these models back up my assumption as this model has the most optimal values. Additionally, the MSE and R^2 values did not get much better as more polynomial terms were added which suggests that is not what will improve the model. 
+
+### 6:
+
+```{python}
+import plotnine as p9
+
+(p9.ggplot(insurance,
+p9.aes(
+  x = "age",
+  y = "charges"
+))
++ p9.geom_point()
++ p9.geom_smooth(method='lm', formula='y ~ x + I(x**2)+ I(x**3) + I(x**4) + I(x**5)+ I(x**6) + I(x**7)+ I(x**8)+ I(x**9) + I(x**10) + I(x**11)+ I(x**12)', se=False, color="red")
+)
+```
+
+## Part 4: New Data
+```{python}
+insurance_new = pd.read_csv("https://www.dropbox.com/s/sky86agc4s8c6qe/insurance_costs_2.csv?dl=1", sep=',')
+```
+
+### Only age as a predictor 
+```{python}
+r2_score(insurance_new['charges'], lr_fit.predict(insurance_new[['age']]))
+```
+
+```{python}
+mean_squared_error(insurance_new["charges"], lr_fit.predict(insurance_new[['age']]))
+```
+
+### Age and BMI as predictors
+```{python}
+r2_score(insurance_new['charges'], lr_age_bmi.predict(insurance_new[['age', 'bmi']]))
+```
+
+```{python}
+mean_squared_error(insurance_new['charges'], lr_age_bmi.predict(insurance_new[['age', 'bmi']]))
+```
+
+### Age, BMI, and smoking status as predictors
+```{python}
+enc_new=OneHotEncoder(handle_unknown='ignore')
+smokes=enc_new.fit(insurance_new[['smoker']])
+smokes=smokes.transform(insurance_new[['smoker']]).todense()
+insurance_new["is_smoker"]=pd.DataFrame(smokes)[1]
+```
+
+```{python}
+lr_age_bmi_smoker=LinearRegression()
+X_age_bmi_smoker=insurance[['age', 'bmi', 'is_smoker']]
+lr_age_bmi_smoker.fit(X_age_bmi_smoker, y)
+```
+
+```{python}
+r2_score(insurance_new['charges'], lr_age_bmi_smoker.predict(insurance_new[['age', 'bmi', 'is_smoker']]))
+```
+
+```{python}
+mean_squared_error(insurance_new['charges'], lr_age_bmi_smoker.predict(insurance_new[['age', 'bmi', 'is_smoker']]))
+```
+
+### age, and bmi, with both quantitative variables having an interaction term with smoker (i.e. the formula ~ (age + bmi):smoker)
+```{python}
+insurance['smoke_age']=insurance['is_smoker']*insurance['age']
+insurance['smoke_bmi']=insurance['is_smoker']*insurance['bmi']
+
+insurance_new['smoke_age']=insurance_new["is_smoker"]*insurance_new['age']
+insurance_new['smoke_bmi']=insurance_new["is_smoker"]*insurance_new['bmi']
+```
+
+```{python}
+lr_smoke_int=LinearRegression()
+X_smoke_int=insurance[['age', 'bmi', 'smoke_age', "smoke_bmi"]]
+lr_smoke_int.fit(X_smoke_int, y)
+```
+
+```{python}
+r2_score(insurance_new['charges'], lr_smoke_int.predict(insurance_new[['age', 'bmi', 'smoke_age', 'smoke_bmi']]))
+```
+
+```{python}
+mean_squared_error(insurance_new['charges'], lr_smoke_int.predict(insurance_new[['age', 'bmi', 'smoke_age', 'smoke_bmi']]))
+```
+
+### age, bmi, and smoker as predictors, with both quantitative variables having an interaction term with smoker (i.e. the formula ~ (age + bmi)*smoker)
+
+```{python}
+lr_all=LinearRegression()
+X_all=insurance[['age', 'bmi', 'is_smoker', 'smoke_age', "smoke_bmi"]]
+lr_all.fit(X_all, y)
+lr_all.coef_, lr_all.intercept_
+```
+
+```{python}
+r2_score(insurance_new['charges'], lr_all.predict(insurance_new[['age', 'bmi', 'is_smoker', 'smoke_age', 'smoke_bmi']]))
+```
+
+```{python}
+mean_squared_error(insurance_new['charges'], lr_all.predict(insurance_new[['age', 'bmi', 'is_smoker', 'smoke_age', 'smoke_bmi']]))
+```
+
+Based on these results, the last model is the best model to use due to how it has the highest R^2 value and the lowest MSE on the new data. However, the second to last model (model only containing age, bmi, and their interaction terms with smoker) can also be argued due to how it has similar MSE and R^2 values to the last model but it is simpler (contains less variables). 
+
+### plot of residuals 
+```{python}
+insurance_new["is_smoker"]=insurance_new["is_smoker"].astype(int)
+insurance_new["is_smoker"]=insurance_new["is_smoker"].astype(str)
+```
+```{python}
+(p9.ggplot(insurance_new,
+p9.aes(
+  x = "bmi",
+  y = "charges", 
+  color="is_smoker"
+))
++ p9.geom_point()
++ p9.geom_abline(intercept=-2524.69, slope=5.36117114, color='red')
++ p9.geom_abline(intercept=-2524.69-20993.71, slope=1481.16585+5.36117114, color='lightblue')
+)
+```
+
+```{python}
+(p9.ggplot(insurance_new,
+p9.aes(
+  x = "age",
+  y = "charges", 
+  color="is_smoker"
+))
++ p9.geom_point()
++ p9.geom_abline(intercept=-2524.685690084003, slope=258.179772, color='red')
++ p9.geom_abline(intercept=21524.181747865998, slope=245.7264773, color='lightblue')
+)
+```
+
+## Part 5: Full Exploration 
+
+```{python}
+insurance["is_smoker"]=insurance["is_smoker"].astype(float)
+insurance_new["is_smoker"]=insurance_new["is_smoker"].astype(float)
+```
+
+model idea: 
+```{python}
+insurance["bmisq"]=insurance["bmi"]**2
+insurance_new["bmisq"]=insurance_new["bmi"]**2
+```
+```{python}
+X_explore=insurance[["age", "bmi", "bmisq", "is_smoker", "smoke_bmi", "smoke_age"]]
+lr_explore=LinearRegression()
+lr_explore.fit(X_explore, y)
+```
+
+```{python}
+r2_score(insurance_new['charges'], lr_explore.predict(insurance_new[["age", "bmi", "bmisq", "is_smoker", "smoke_bmi", "smoke_age"]]))
+```
+
+```{python}
+mean_squared_error(insurance_new['charges'], lr_explore.predict(insurance_new[["age", "bmi", "bmisq", "is_smoker", "smoke_bmi", "smoke_age"]]))
+```
+
+For the full exploration section, I used the model from part 4 except I added a squared term of bmi. This model has the best R^2 and MSE on the new data, meaning it does not overfit based on the training data. 
+
+
