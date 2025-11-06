@@ -136,7 +136,7 @@ lr2_fitted = lr2_pipeline.fit(X_train, y_train)
 lr2_newdata=lr2_pipeline.predict(X_test, y_test)
 ```
 
-Using only the size and number of rooms.
+### Using only the size and number of rooms.
 
 ```{python}
 ct_twovars = ColumnTransformer(
@@ -156,7 +156,6 @@ lr_size_num_pipeline = Pipeline(
     [("select correct vars", ct_twovars), 
     ("linear_regression", LinearRegression())]
 )
-
 ```
 
 ```{python}
@@ -173,10 +172,10 @@ y_preds = lr_size_num_pipeline.predict(X)
 r2_score(y, y_preds)
 ```
 
-Using size, number of rooms, and building type.
-Do the same thing as you did before but also select building type 
+### Using size, number of rooms, and building type: 
 
-Using size and building type, and their interaction.
+
+Using size and building type, and their interaction: 
 
 defined from before:
 ```{python}

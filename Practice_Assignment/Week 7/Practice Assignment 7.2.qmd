@@ -1,0 +1,214 @@
+---
+title: "Practice Assignment 7.2"
+format: 
+    html:
+        embed-resources: true
+---
+
+Make a pipeline that uses all the variables in the Ames dataset, and then fits Ridge Regression with all variables. 
+
+Cross-validate this pipeline and compare the results to the ordinary linear regression.
+
+Then fit the model on the whole dataset and get the coefficients. Make a plot of these coefficients compared to the ones from ordinary linear regression.
+
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.compose import make_column_selector, ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet 
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import r2_score
+```
+
+Data cleaning: 
+```{python}
+# Read the data
+ames = pd.read_csv("~/Desktop/GSB 544/Notes/Data/AmesHousing.csv", sep=",")
+
+# Get rid of columns with mostly NaN values
+good_cols = ames.isna().sum() < 100
+ames = ames.loc[:,good_cols]
+
+# Drop other NAs
+ames = ames.dropna()
+```
+
+Setting up pipeline: 
+```{python}
+X = ames.drop(["SalePrice", "Order", "PID"], axis = 1) 
+y = ames["SalePrice"]
+
+
+ct = ColumnTransformer(
+  [
+    ("dummify", 
+    OneHotEncoder(sparse_output = False, handle_unknown='ignore'), #you need the ignore so that something doesnt go wrong when you encounter new categories in your testing data that wasn't in your training data 
+    make_column_selector(dtype_include=object)), #this dummifies anything that is an object s youdont have to name every single variable 
+    ("standardize", 
+    StandardScaler(), 
+    make_column_selector(dtype_include=np.number))
+  ],
+  remainder = "passthrough"
+)
+
+lr_pipeline_1 = Pipeline(
+  [("preprocessing", ct),
+  ("linear_regression", LinearRegression())]
+)
+```
+
+
+```{python}
+cross_val_score(lr_pipeline_1, X, y, cv = 5, scoring = 'r2')
+```
+
+### Ridge lambda=0.001
+```{python}
+ridge_pipeline_0001 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 0.001", Ridge(alpha=0.001))]
+)
+```
+
+```{python}
+scores1=cross_val_score(ridge_pipeline_0001, X, y, cv = 5, scoring = 'r2')
+scores1.mean()
+```
+
+### Ridge lambda=0.01
+```{python}
+ridge_pipeline_001 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 1", Ridge(alpha=0.01))]
+)
+```
+
+```{python}
+scores2=cross_val_score(ridge_pipeline_001, X, y, cv = 5, scoring = 'r2')
+scores2.mean()
+```
+
+### Ridge lambda=0.1
+```{python}
+ridge_pipeline_01 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 1", Ridge(alpha=0.1))]
+)
+```
+
+```{python}
+scores3=cross_val_score(ridge_pipeline_01, X, y, cv = 5, scoring = 'r2')
+scores3.mean()
+```
+
+### Ridge lambda=1
+```{python}
+ridge_pipeline_1 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 1", Ridge(alpha=1))]
+)
+```
+
+```{python}
+scores4=cross_val_score(ridge_pipeline_1, X, y, cv = 5, scoring = 'r2')
+scores4.mean()
+```
+
+### Ridge lambda=10
+```{python}
+ridge_pipeline_10 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 10", Ridge(alpha=10))]
+)
+```
+
+```{python}
+scores5=cross_val_score(ridge_pipeline_10, X, y, cv = 5, scoring = 'r2')
+scores5.mean()
+```
+
+Lambda=10 is the optimal value for the ridge regression out of values we tried. 
+
+### Lasso
+```{python}
+lasso_pipeline_0001 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 0.001", Lasso(alpha=0.001))]
+)
+
+lasso_pipeline_001 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 0.01", Lasso(alpha=0.01))]
+)
+
+lasso_pipeline_01 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 0.1", Lasso(alpha=0.1))]
+)
+
+lasso_pipeline_1 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 1", Lasso(alpha=1))]
+)
+
+lasso_pipeline_10 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 10", Lasso(alpha=10))]
+)
+```
+
+```{python}
+scores1lasso=cross_val_score(lasso_pipeline_0001, X, y, cv = 5, scoring = 'r2')
+scores2lasso=cross_val_score(lasso_pipeline_001, X, y, cv = 5, scoring = 'r2')
+scores3lasso=cross_val_score(lasso_pipeline_01, X, y, cv = 5, scoring = 'r2')
+scores4lasso=cross_val_score(lasso_pipeline_1, X, y, cv = 5, scoring = 'r2')
+scores5lasso=cross_val_score(lasso_pipeline_10, X, y, cv = 5, scoring = 'r2')
+
+print(scores1lasso.mean(), scores2lasso.mean(), scores3lasso.mean(), scores4lasso.mean(), scores5lasso.mean())
+```
+
+Lambda=10 is the optimal choice for the Lasso regression from the options we ran. 
+
+
+### Elastic Net
+```{python}
+elastic_pipeline_0001 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 0.001", ElasticNet(alpha=0.001, l1_ratio=0.1))]
+)
+
+elastic_pipeline_001 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 0.01", ElasticNet(alpha=0.01, l1_ratio=0.4))]
+)
+
+elastic_pipeline_01 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 0.1", ElasticNet(alpha=0.1, l1_ratio=0.7))]
+)
+
+elastic_pipeline_1 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 1", ElasticNet(alpha=1, l1_ratio=0.3))]
+)
+
+elastic_pipeline_10 = Pipeline(
+  [("preprocessing", ct),
+  ("ridge alpha 10", ElasticNet(alpha=10, l1_ratio=0.8))]
+)
+```
+
+```{python}
+scores1elastic=cross_val_score(elastic_pipeline_0001, X, y, cv = 5, scoring = 'r2')
+scores2elastic=cross_val_score(elastic_pipeline_001, X, y, cv = 5, scoring = 'r2')
+scores3elastic=cross_val_score(elastic_pipeline_01, X, y, cv = 5, scoring = 'r2')
+scores4elastic=cross_val_score(elastic_pipeline_1, X, y, cv = 5, scoring = 'r2')
+scores5elastic=cross_val_score(elastic_pipeline_10, X, y, cv = 5, scoring = 'r2')
+
+print(scores1elastic.mean(), scores2elastic.mean(), scores3elastic.mean(), scores4elastic.mean(), scores5elastic.mean())
+```
+
+0.1 is the best lambda value with the tested ratios. 
+

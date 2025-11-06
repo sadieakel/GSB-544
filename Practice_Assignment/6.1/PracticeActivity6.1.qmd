@@ -1,0 +1,115 @@
+---
+title: "Practice Activity 7.1"
+format: 
+    html:
+        embed-resources: true
+---
+
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+```
+
+```{python}
+ames = pd.read_csv("~/Desktop/GSB 544/Notes/Data/AmesHousing.csv", sep=",")
+```
+
+```{python}
+X = ames.drop(columns='SalePrice')
+y=ames['SalePrice']
+```
+
+### Using only Size and number of rooms: 
+
+```{python}
+ct_twovars = ColumnTransformer(
+  [
+    ("dropstuff", "passthrough", ["Lot Area", "TotRms AbvGrd"]) #"passthrough" just keeps the lot area and TotRms AbcGrd can also use StandardScalar
+  ],
+  remainder = "drop"
+).set_output(transform = "pandas")
+```
+
+```{python}
+lr_size_num_pipeline = Pipeline(
+    [("select correct vars", ct_twovars), 
+    ("linear regression", LinearRegression())]
+)
+```
+
+```{python}
+lr_size_num_pipeline.fit(X,y)
+```
+
+```{python}
+y_preds = lr_size_num_pipeline.predict(X)
+r2_score(y, y_preds)
+```
+
+### Using size, number of rooms, and building type 
+
+```{python}
+ct_dummify_and_select = ColumnTransformer(
+  [("dummify", OneHotEncoder(sparse_output = False), ["Bldg Type"]),
+  ("select columns", "passthrough", ["Lot Area", "TotRms AbvGrd"])], 
+  remainder = "drop"
+).set_output(transform = "pandas")
+```
+
+```{python}
+lr_size_num_bldg_pipeline = Pipeline(
+    [("dummify and select", ct_dummify_and_select),
+    ("linear regression", LinearRegression())]
+)
+```
+
+```{python}
+lr_size_num_bldg_pipeline.fit(X,y)
+```
+
+```{python}
+y_preds_2 = lr_size_num_bldg_pipeline.predict(X)
+r2_score(y, y_preds_2)
+```
+
+### Using size and building type, and their interaction
+```{python}
+ct_dummy_get = ColumnTransformer(
+  [("dummify", OneHotEncoder(sparse_output = False), ["Bldg Type"]),
+  ("select columns", "passthrough", ["Lot Area"])], 
+  remainder = "drop"
+).set_output(transform = "pandas")
+```
+
+```{python}
+ct_int_size_bldg = ColumnTransformer(
+  [
+    ("interaction 1Fam", PolynomialFeatures(interaction_only = True), ["Lot Area", "dummify__Bldg Type_1Fam"]),
+    ("interaction TwhseE", PolynomialFeatures(interaction_only = True), ["Lot Area", "dummify__Bldg Type_TwnhsE"]),
+    ("interaction Twnhs", PolynomialFeatures(interaction_only = True), ["Lot Area", "dummify__Bldg Type_Twnhs"]), 
+    ("interaction Duplex", PolynomialFeatures(interaction_only = True), ["Lot Area", "dummify__Bldg Type_Duplex"])
+  ],
+  remainder = "drop"
+).set_output(transform = "pandas")
+```
+
+```{python}
+lr_size_bldg_pipeline = Pipeline(
+    [("dummify and select", ct_dummy_get),
+    ("interaction", ct_int_size_bldg), 
+    ("linear regression", LinearRegression())]
+)
+```
+
+```{python}
+lr_size_bldg_pipeline.fit(X,y)
+```
+
+
