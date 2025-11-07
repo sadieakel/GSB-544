@@ -2200,7 +2200,7 @@ vertical-align: -.125em;
 </header>
 
 
-<div id="f76091cd" class="cell" data-execution_count="1">
+<div id="eca508ea" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
@@ -2212,32 +2212,32 @@ vertical-align: -.125em;
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="9e9330ff" class="cell" data-execution_count="2">
+<div id="380fe3db" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ames <span class="op">=</span> pd.read_csv(<span class="st">&quot;~/Desktop/GSB 544/Notes/Data/AmesHousing.csv&quot;</span>, sep<span class="op">=</span><span class="st">&quot;,&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="c4ea4903" class="cell" data-execution_count="3">
+<div id="6c72f58b" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> ames.drop(columns<span class="op">=</span><span class="st">&#39;SalePrice&#39;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y<span class="op">=</span>ames[<span class="st">&#39;SalePrice&#39;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="using-only-size-and-number-of-rooms" class="level3">
 <h3 class="anchored" data-anchor-id="using-only-size-and-number-of-rooms">Using only Size and number of rooms:</h3>
-<div id="fef63de5" class="cell" data-execution_count="4">
+<div id="92d354b3" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ct_twovars <span class="op">=</span> ColumnTransformer(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  [</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;dropstuff&quot;</span>, <span class="st">&quot;passthrough&quot;</span>, [<span class="st">&quot;Lot Area&quot;</span>, <span class="st">&quot;TotRms AbvGrd&quot;</span>]) <span class="co">#&quot;passthrough&quot; just keeps the lot area and TotRms AbcGrd can also use StandardScalar</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;dropstuff&quot;</span>, <span class="st">&quot;passthrough&quot;</span>, [<span class="st">&quot;Gr Liv Area&quot;</span>, <span class="st">&quot;TotRms AbvGrd&quot;</span>]) <span class="co">#&quot;passthrough&quot; just keeps the lot area and TotRms AbcGrd can also use StandardScalar</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  ],</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  remainder <span class="op">=</span> <span class="st">&quot;drop&quot;</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>).set_output(transform <span class="op">=</span> <span class="st">&quot;pandas&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="d7208b1a" class="cell" data-execution_count="5">
+<div id="e6b3046e" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>lr_size_num_pipeline <span class="op">=</span> Pipeline(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    [(<span class="st">&quot;select correct vars&quot;</span>, ct_twovars), </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;linear regression&quot;</span>, LinearRegression())]</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="f89160c6" class="cell" data-execution_count="6">
+<div id="91eb7c24" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>lr_size_num_pipeline.fit(X,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
+<div class="cell-output cell-output-display" data-execution_count="31">
 <style>#sk-container-id-5 {
 
 --sklearn-color-text: #000;
@@ -2587,42 +2587,42 @@ display: block;
 }
 </style><div id="sk-container-id-5" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#39;select correct vars&#39;,
                  ColumnTransformer(transformers=[(&#39;dropstuff&#39;, &#39;passthrough&#39;,
-                                                  [&#39;Lot Area&#39;,
+                                                  [&#39;Gr Liv Area&#39;,
                                                    &#39;TotRms AbvGrd&#39;])])),
                 (&#39;linear regression&#39;, LinearRegression())])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-36" type="checkbox"><label for="sk-estimator-id-36" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>Pipeline</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></div></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#39;select correct vars&#39;,
                  ColumnTransformer(transformers=[(&#39;dropstuff&#39;, &#39;passthrough&#39;,
-                                                  [&#39;Lot Area&#39;,
+                                                  [&#39;Gr Liv Area&#39;,
                                                    &#39;TotRms AbvGrd&#39;])])),
                 (&#39;linear regression&#39;, LinearRegression())])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-37" type="checkbox"><label for="sk-estimator-id-37" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>select correct vars: ColumnTransformer</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for select correct vars: ColumnTransformer</span></a></div></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#39;dropstuff&#39;, &#39;passthrough&#39;,
-                                 [&#39;Lot Area&#39;, &#39;TotRms AbvGrd&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-38" type="checkbox"><label for="sk-estimator-id-38" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dropstuff</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Lot Area&#39;, &#39;TotRms AbvGrd&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-39" type="checkbox"><label for="sk-estimator-id-39" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>passthrough</div></div></label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-40" type="checkbox"><label for="sk-estimator-id-40" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>LinearRegression</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LinearRegression.html">?<span>Documentation for LinearRegression</span></a></div></label><div class="sk-toggleable__content fitted"><pre>LinearRegression()</pre></div> </div></div></div></div></div></div>
+                                 [&#39;Gr Liv Area&#39;, &#39;TotRms AbvGrd&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-38" type="checkbox"><label for="sk-estimator-id-38" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dropstuff</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Gr Liv Area&#39;, &#39;TotRms AbvGrd&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-39" type="checkbox"><label for="sk-estimator-id-39" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>passthrough</div></div></label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-40" type="checkbox"><label for="sk-estimator-id-40" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>LinearRegression</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LinearRegression.html">?<span>Documentation for LinearRegression</span></a></div></label><div class="sk-toggleable__content fitted"><pre>LinearRegression()</pre></div> </div></div></div></div></div></div>
 </div>
 </div>
-<div id="926a80c9" class="cell" data-execution_count="7">
+<div id="17ca9c5a" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>scores1 <span class="op">=</span> cross_val_score(lr_size_num_pipeline, X, y, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">&#39;r2&#39;</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(scores1, scores1.mean())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0.28983685 0.19470509 0.21304882 0.27368701 0.3017319 ] 0.25460193356700106</code></pre>
+<pre><code>[0.49734232 0.48672143 0.40178127 0.53395268 0.60124607] 0.504208752508862</code></pre>
 </div>
 </div>
 </section>
 <section id="using-size-number-of-rooms-and-building-type" class="level3">
 <h3 class="anchored" data-anchor-id="using-size-number-of-rooms-and-building-type">Using size, number of rooms, and building type</h3>
-<div id="ba9750ec" class="cell" data-execution_count="8">
+<div id="b614ebba" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ct_dummify_and_select <span class="op">=</span> ColumnTransformer(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  [(<span class="st">&quot;dummify&quot;</span>, OneHotEncoder(sparse_output <span class="op">=</span> <span class="va">False</span>), [<span class="st">&quot;Bldg Type&quot;</span>]),</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  (<span class="st">&quot;select columns&quot;</span>, <span class="st">&quot;passthrough&quot;</span>, [<span class="st">&quot;Lot Area&quot;</span>, <span class="st">&quot;TotRms AbvGrd&quot;</span>])], </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  (<span class="st">&quot;select columns&quot;</span>, <span class="st">&quot;passthrough&quot;</span>, [<span class="st">&quot;Gr Liv Area&quot;</span>, <span class="st">&quot;TotRms AbvGrd&quot;</span>])], </span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  remainder <span class="op">=</span> <span class="st">&quot;drop&quot;</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>).set_output(transform <span class="op">=</span> <span class="st">&quot;pandas&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="5b90df63" class="cell" data-execution_count="9">
+<div id="aaf0e871" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>lr_size_num_bldg_pipeline <span class="op">=</span> Pipeline(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    [(<span class="st">&quot;dummify and select&quot;</span>, ct_dummify_and_select),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;linear regression&quot;</span>, LinearRegression())]</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="54af42f0" class="cell" data-execution_count="10">
+<div id="d4425f37" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lr_size_num_bldg_pipeline.fit(X,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="33">
+<div class="cell-output cell-output-display" data-execution_count="35">
 <style>#sk-container-id-6 {
 
 --sklearn-color-text: #000;
@@ -2976,7 +2976,7 @@ display: block;
                                                   [&#39;Bldg Type&#39;]),
                                                  (&#39;select columns&#39;,
                                                   &#39;passthrough&#39;,
-                                                  [&#39;Lot Area&#39;,
+                                                  [&#39;Gr Liv Area&#39;,
                                                    &#39;TotRms AbvGrd&#39;])])),
                 (&#39;linear regression&#39;, LinearRegression())])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-41" type="checkbox"><label for="sk-estimator-id-41" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>Pipeline</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></div></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#39;dummify and select&#39;,
                  ColumnTransformer(transformers=[(&#39;dummify&#39;,
@@ -2984,52 +2984,52 @@ display: block;
                                                   [&#39;Bldg Type&#39;]),
                                                  (&#39;select columns&#39;,
                                                   &#39;passthrough&#39;,
-                                                  [&#39;Lot Area&#39;,
+                                                  [&#39;Gr Liv Area&#39;,
                                                    &#39;TotRms AbvGrd&#39;])])),
                 (&#39;linear regression&#39;, LinearRegression())])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-42" type="checkbox"><label for="sk-estimator-id-42" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dummify and select: ColumnTransformer</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for dummify and select: ColumnTransformer</span></a></div></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#39;dummify&#39;, OneHotEncoder(sparse_output=False),
                                  [&#39;Bldg Type&#39;]),
                                 (&#39;select columns&#39;, &#39;passthrough&#39;,
-                                 [&#39;Lot Area&#39;, &#39;TotRms AbvGrd&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-43" type="checkbox"><label for="sk-estimator-id-43" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dummify</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Bldg Type&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-44" type="checkbox"><label for="sk-estimator-id-44" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>OneHotEncoder</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.OneHotEncoder.html">?<span>Documentation for OneHotEncoder</span></a></div></label><div class="sk-toggleable__content fitted"><pre>OneHotEncoder(sparse_output=False)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-45" type="checkbox"><label for="sk-estimator-id-45" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>select columns</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Lot Area&#39;, &#39;TotRms AbvGrd&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-46" type="checkbox"><label for="sk-estimator-id-46" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>passthrough</div></div></label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-47" type="checkbox"><label for="sk-estimator-id-47" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>LinearRegression</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LinearRegression.html">?<span>Documentation for LinearRegression</span></a></div></label><div class="sk-toggleable__content fitted"><pre>LinearRegression()</pre></div> </div></div></div></div></div></div>
+                                 [&#39;Gr Liv Area&#39;, &#39;TotRms AbvGrd&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-43" type="checkbox"><label for="sk-estimator-id-43" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dummify</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Bldg Type&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-44" type="checkbox"><label for="sk-estimator-id-44" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>OneHotEncoder</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.OneHotEncoder.html">?<span>Documentation for OneHotEncoder</span></a></div></label><div class="sk-toggleable__content fitted"><pre>OneHotEncoder(sparse_output=False)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-45" type="checkbox"><label for="sk-estimator-id-45" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>select columns</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Gr Liv Area&#39;, &#39;TotRms AbvGrd&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-46" type="checkbox"><label for="sk-estimator-id-46" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>passthrough</div></div></label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-47" type="checkbox"><label for="sk-estimator-id-47" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>LinearRegression</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LinearRegression.html">?<span>Documentation for LinearRegression</span></a></div></label><div class="sk-toggleable__content fitted"><pre>LinearRegression()</pre></div> </div></div></div></div></div></div>
 </div>
 </div>
-<div id="10a1a074" class="cell" data-execution_count="11">
+<div id="973bd550" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>scores2 <span class="op">=</span> cross_val_score(lr_size_num_bldg_pipeline, X, y, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">&#39;r2&#39;</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(scores2, scores2.mean())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0.37466733 0.29217354 0.32265588 0.36415726 0.36351046] 0.34343289518494213</code></pre>
+<pre><code>[0.53197809 0.53225302 0.42829534 0.56574793 0.60613781] 0.5328824390692046</code></pre>
 </div>
 </div>
 </section>
 <section id="using-size-and-building-type-and-their-interaction" class="level3">
 <h3 class="anchored" data-anchor-id="using-size-and-building-type-and-their-interaction">Using size and building type, and their interaction</h3>
-<div id="ca783f28" class="cell" data-execution_count="12">
+<div id="0ea976fd" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ct_dummy_get <span class="op">=</span> ColumnTransformer(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  [(<span class="st">&quot;dummify&quot;</span>, OneHotEncoder(sparse_output <span class="op">=</span> <span class="va">False</span>), [<span class="st">&quot;Bldg Type&quot;</span>]),</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  (<span class="st">&quot;select columns&quot;</span>, <span class="st">&quot;passthrough&quot;</span>, [<span class="st">&quot;Lot Area&quot;</span>])], </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  (<span class="st">&quot;select columns&quot;</span>, <span class="st">&quot;passthrough&quot;</span>, [<span class="st">&quot;Gr Liv Area&quot;</span>])], </span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  remainder <span class="op">=</span> <span class="st">&quot;drop&quot;</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>).set_output(transform <span class="op">=</span> <span class="st">&quot;pandas&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cf1abb9e" class="cell" data-execution_count="13">
+<div id="51e9fc5d" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ct_int_size_bldg <span class="op">=</span> ColumnTransformer(</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  [</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction 1Fam&quot;</span>, PolynomialFeatures(interaction_only <span class="op">=</span> <span class="va">True</span>), [<span class="st">&quot;select columns__Lot Area&quot;</span>, <span class="st">&quot;dummify__Bldg Type_1Fam&quot;</span>]),</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction TwnhsE&quot;</span>, PolynomialFeatures(interaction_only <span class="op">=</span> <span class="va">True</span>), [<span class="st">&quot;select columns__Lot Area&quot;</span>, <span class="st">&quot;dummify__Bldg Type_TwnhsE&quot;</span>]),</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction Twnhs&quot;</span>, PolynomialFeatures(interaction_only <span class="op">=</span> <span class="va">True</span>), [<span class="st">&quot;select columns__Lot Area&quot;</span>, <span class="st">&quot;dummify__Bldg Type_Twnhs&quot;</span>]), </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction Duplex&quot;</span>, PolynomialFeatures(interaction_only <span class="op">=</span> <span class="va">True</span>), [<span class="st">&quot;select columns__Lot Area&quot;</span>, <span class="st">&quot;dummify__Bldg Type_Duplex&quot;</span>])</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction 1Fam&quot;</span>, PolynomialFeatures(interaction_only <span class="op">=</span> <span class="va">True</span>), [<span class="st">&quot;select columns__Gr Liv Area&quot;</span>, <span class="st">&quot;dummify__Bldg Type_1Fam&quot;</span>]),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction TwnhsE&quot;</span>, PolynomialFeatures(interaction_only <span class="op">=</span> <span class="va">True</span>), [<span class="st">&quot;select columns__Gr Liv Area&quot;</span>, <span class="st">&quot;dummify__Bldg Type_TwnhsE&quot;</span>]),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction Twnhs&quot;</span>, PolynomialFeatures(interaction_only <span class="op">=</span> <span class="va">True</span>), [<span class="st">&quot;select columns__Gr Liv Area&quot;</span>, <span class="st">&quot;dummify__Bldg Type_Twnhs&quot;</span>]), </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction Duplex&quot;</span>, PolynomialFeatures(interaction_only <span class="op">=</span> <span class="va">True</span>), [<span class="st">&quot;select columns__Gr Liv Area&quot;</span>, <span class="st">&quot;dummify__Bldg Type_Duplex&quot;</span>])</span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  ],</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  remainder <span class="op">=</span> <span class="st">&quot;drop&quot;</span></span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>).set_output(transform <span class="op">=</span> <span class="st">&quot;pandas&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="4e455723" class="cell" data-execution_count="14">
+<div id="8a95ff3c" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lr_size_bldg_pipeline <span class="op">=</span> Pipeline(</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    [(<span class="st">&quot;dummify and select&quot;</span>, ct_dummy_get),</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;interaction&quot;</span>, ct_int_size_bldg), </span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;linear regression&quot;</span>, LinearRegression())]</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="207f3bcd" class="cell" data-execution_count="15">
+<div id="b9b6b8ab" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lr_size_bldg_pipeline.fit(X,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="38">
+<div class="cell-output cell-output-display" data-execution_count="40">
 <style>#sk-container-id-7 {
 
 --sklearn-color-text: #000;
@@ -3383,24 +3383,28 @@ display: block;
                                                   [&#39;Bldg Type&#39;]),
                                                  (&#39;select columns&#39;,
                                                   &#39;passthrough&#39;,
-                                                  [&#39;Lot Area&#39;])])),
+                                                  [&#39;Gr Liv Area&#39;])])),
                 (&#39;interaction&#39;,
                  ColumnTransformer(transformers=[(&#39;interaction 1Fam&#39;,
                                                   PolynomialFeatures(interaction_only=True),
-                                                  [&#39;select columns__Lot Area&#39;,
+                                                  [&#39;select columns__Gr Liv &#39;
+                                                   &#39;Area&#39;,
                                                    &#39;dummify__Bldg Type_1Fam&#39;]),
-                                                 (&#39;interaction T...
+                                                 (&#39;intera...
                                                   PolynomialFeatures(interaction_only=True),
-                                                  [&#39;select columns__Lot Area&#39;,
+                                                  [&#39;select columns__Gr Liv &#39;
+                                                   &#39;Area&#39;,
                                                    &#39;dummify__Bldg &#39;
                                                    &#39;Type_TwnhsE&#39;]),
                                                  (&#39;interaction Twnhs&#39;,
                                                   PolynomialFeatures(interaction_only=True),
-                                                  [&#39;select columns__Lot Area&#39;,
+                                                  [&#39;select columns__Gr Liv &#39;
+                                                   &#39;Area&#39;,
                                                    &#39;dummify__Bldg Type_Twnhs&#39;]),
                                                  (&#39;interaction Duplex&#39;,
                                                   PolynomialFeatures(interaction_only=True),
-                                                  [&#39;select columns__Lot Area&#39;,
+                                                  [&#39;select columns__Gr Liv &#39;
+                                                   &#39;Area&#39;,
                                                    &#39;dummify__Bldg &#39;
                                                    &#39;Type_Duplex&#39;])])),
                 (&#39;linear regression&#39;, LinearRegression())])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-48" type="checkbox"><label for="sk-estimator-id-48" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>Pipeline</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></div></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#39;dummify and select&#39;,
@@ -3409,58 +3413,62 @@ display: block;
                                                   [&#39;Bldg Type&#39;]),
                                                  (&#39;select columns&#39;,
                                                   &#39;passthrough&#39;,
-                                                  [&#39;Lot Area&#39;])])),
+                                                  [&#39;Gr Liv Area&#39;])])),
                 (&#39;interaction&#39;,
                  ColumnTransformer(transformers=[(&#39;interaction 1Fam&#39;,
                                                   PolynomialFeatures(interaction_only=True),
-                                                  [&#39;select columns__Lot Area&#39;,
+                                                  [&#39;select columns__Gr Liv &#39;
+                                                   &#39;Area&#39;,
                                                    &#39;dummify__Bldg Type_1Fam&#39;]),
-                                                 (&#39;interaction T...
+                                                 (&#39;intera...
                                                   PolynomialFeatures(interaction_only=True),
-                                                  [&#39;select columns__Lot Area&#39;,
+                                                  [&#39;select columns__Gr Liv &#39;
+                                                   &#39;Area&#39;,
                                                    &#39;dummify__Bldg &#39;
                                                    &#39;Type_TwnhsE&#39;]),
                                                  (&#39;interaction Twnhs&#39;,
                                                   PolynomialFeatures(interaction_only=True),
-                                                  [&#39;select columns__Lot Area&#39;,
+                                                  [&#39;select columns__Gr Liv &#39;
+                                                   &#39;Area&#39;,
                                                    &#39;dummify__Bldg Type_Twnhs&#39;]),
                                                  (&#39;interaction Duplex&#39;,
                                                   PolynomialFeatures(interaction_only=True),
-                                                  [&#39;select columns__Lot Area&#39;,
+                                                  [&#39;select columns__Gr Liv &#39;
+                                                   &#39;Area&#39;,
                                                    &#39;dummify__Bldg &#39;
                                                    &#39;Type_Duplex&#39;])])),
                 (&#39;linear regression&#39;, LinearRegression())])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-49" type="checkbox"><label for="sk-estimator-id-49" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dummify and select: ColumnTransformer</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for dummify and select: ColumnTransformer</span></a></div></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#39;dummify&#39;, OneHotEncoder(sparse_output=False),
                                  [&#39;Bldg Type&#39;]),
                                 (&#39;select columns&#39;, &#39;passthrough&#39;,
-                                 [&#39;Lot Area&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-50" type="checkbox"><label for="sk-estimator-id-50" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dummify</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Bldg Type&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-51" type="checkbox"><label for="sk-estimator-id-51" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>OneHotEncoder</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.OneHotEncoder.html">?<span>Documentation for OneHotEncoder</span></a></div></label><div class="sk-toggleable__content fitted"><pre>OneHotEncoder(sparse_output=False)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-52" type="checkbox"><label for="sk-estimator-id-52" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>select columns</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Lot Area&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-53" type="checkbox"><label for="sk-estimator-id-53" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>passthrough</div></div></label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-54" type="checkbox"><label for="sk-estimator-id-54" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction: ColumnTransformer</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for interaction: ColumnTransformer</span></a></div></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#39;interaction 1Fam&#39;,
+                                 [&#39;Gr Liv Area&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-50" type="checkbox"><label for="sk-estimator-id-50" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dummify</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Bldg Type&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-51" type="checkbox"><label for="sk-estimator-id-51" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>OneHotEncoder</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.OneHotEncoder.html">?<span>Documentation for OneHotEncoder</span></a></div></label><div class="sk-toggleable__content fitted"><pre>OneHotEncoder(sparse_output=False)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-52" type="checkbox"><label for="sk-estimator-id-52" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>select columns</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Gr Liv Area&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-53" type="checkbox"><label for="sk-estimator-id-53" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>passthrough</div></div></label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-54" type="checkbox"><label for="sk-estimator-id-54" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction: ColumnTransformer</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for interaction: ColumnTransformer</span></a></div></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#39;interaction 1Fam&#39;,
                                  PolynomialFeatures(interaction_only=True),
-                                 [&#39;select columns__Lot Area&#39;,
+                                 [&#39;select columns__Gr Liv Area&#39;,
                                   &#39;dummify__Bldg Type_1Fam&#39;]),
                                 (&#39;interaction TwnhsE&#39;,
                                  PolynomialFeatures(interaction_only=True),
-                                 [&#39;select columns__Lot Area&#39;,
+                                 [&#39;select columns__Gr Liv Area&#39;,
                                   &#39;dummify__Bldg Type_TwnhsE&#39;]),
                                 (&#39;interaction Twnhs&#39;,
                                  PolynomialFeatures(interaction_only=True),
-                                 [&#39;select columns__Lot Area&#39;,
+                                 [&#39;select columns__Gr Liv Area&#39;,
                                   &#39;dummify__Bldg Type_Twnhs&#39;]),
                                 (&#39;interaction Duplex&#39;,
                                  PolynomialFeatures(interaction_only=True),
-                                 [&#39;select columns__Lot Area&#39;,
-                                  &#39;dummify__Bldg Type_Duplex&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-55" type="checkbox"><label for="sk-estimator-id-55" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction 1Fam</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;select columns__Lot Area&#39;, &#39;dummify__Bldg Type_1Fam&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-56" type="checkbox"><label for="sk-estimator-id-56" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>PolynomialFeatures</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.PolynomialFeatures.html">?<span>Documentation for PolynomialFeatures</span></a></div></label><div class="sk-toggleable__content fitted"><pre>PolynomialFeatures(interaction_only=True)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-57" type="checkbox"><label for="sk-estimator-id-57" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction TwnhsE</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;select columns__Lot Area&#39;, &#39;dummify__Bldg Type_TwnhsE&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-58" type="checkbox"><label for="sk-estimator-id-58" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>PolynomialFeatures</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.PolynomialFeatures.html">?<span>Documentation for PolynomialFeatures</span></a></div></label><div class="sk-toggleable__content fitted"><pre>PolynomialFeatures(interaction_only=True)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-59" type="checkbox"><label for="sk-estimator-id-59" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction Twnhs</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;select columns__Lot Area&#39;, &#39;dummify__Bldg Type_Twnhs&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-60" type="checkbox"><label for="sk-estimator-id-60" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>PolynomialFeatures</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.PolynomialFeatures.html">?<span>Documentation for PolynomialFeatures</span></a></div></label><div class="sk-toggleable__content fitted"><pre>PolynomialFeatures(interaction_only=True)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-61" type="checkbox"><label for="sk-estimator-id-61" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction Duplex</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;select columns__Lot Area&#39;, &#39;dummify__Bldg Type_Duplex&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-62" type="checkbox"><label for="sk-estimator-id-62" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>PolynomialFeatures</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.PolynomialFeatures.html">?<span>Documentation for PolynomialFeatures</span></a></div></label><div class="sk-toggleable__content fitted"><pre>PolynomialFeatures(interaction_only=True)</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-63" type="checkbox"><label for="sk-estimator-id-63" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>LinearRegression</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LinearRegression.html">?<span>Documentation for LinearRegression</span></a></div></label><div class="sk-toggleable__content fitted"><pre>LinearRegression()</pre></div> </div></div></div></div></div></div>
+                                 [&#39;select columns__Gr Liv Area&#39;,
+                                  &#39;dummify__Bldg Type_Duplex&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-55" type="checkbox"><label for="sk-estimator-id-55" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction 1Fam</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;select columns__Gr Liv Area&#39;, &#39;dummify__Bldg Type_1Fam&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-56" type="checkbox"><label for="sk-estimator-id-56" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>PolynomialFeatures</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.PolynomialFeatures.html">?<span>Documentation for PolynomialFeatures</span></a></div></label><div class="sk-toggleable__content fitted"><pre>PolynomialFeatures(interaction_only=True)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-57" type="checkbox"><label for="sk-estimator-id-57" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction TwnhsE</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;select columns__Gr Liv Area&#39;, &#39;dummify__Bldg Type_TwnhsE&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-58" type="checkbox"><label for="sk-estimator-id-58" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>PolynomialFeatures</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.PolynomialFeatures.html">?<span>Documentation for PolynomialFeatures</span></a></div></label><div class="sk-toggleable__content fitted"><pre>PolynomialFeatures(interaction_only=True)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-59" type="checkbox"><label for="sk-estimator-id-59" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction Twnhs</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;select columns__Gr Liv Area&#39;, &#39;dummify__Bldg Type_Twnhs&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-60" type="checkbox"><label for="sk-estimator-id-60" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>PolynomialFeatures</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.PolynomialFeatures.html">?<span>Documentation for PolynomialFeatures</span></a></div></label><div class="sk-toggleable__content fitted"><pre>PolynomialFeatures(interaction_only=True)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-61" type="checkbox"><label for="sk-estimator-id-61" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>interaction Duplex</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;select columns__Gr Liv Area&#39;, &#39;dummify__Bldg Type_Duplex&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-62" type="checkbox"><label for="sk-estimator-id-62" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>PolynomialFeatures</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.PolynomialFeatures.html">?<span>Documentation for PolynomialFeatures</span></a></div></label><div class="sk-toggleable__content fitted"><pre>PolynomialFeatures(interaction_only=True)</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-63" type="checkbox"><label for="sk-estimator-id-63" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>LinearRegression</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LinearRegression.html">?<span>Documentation for LinearRegression</span></a></div></label><div class="sk-toggleable__content fitted"><pre>LinearRegression()</pre></div> </div></div></div></div></div></div>
 </div>
 </div>
-<div id="02c231dc" class="cell" data-execution_count="16">
+<div id="b21d8707" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>scores3 <span class="op">=</span> cross_val_score(lr_size_bldg_pipeline, X, y, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">&#39;r2&#39;</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(scores3, scores3.mean())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0.0883444  0.0360029  0.12501087 0.05625353 0.16723236] 0.09456881316584945</code></pre>
+<pre><code>[0.55492719 0.5421879  0.43095771 0.58264186 0.61362154] 0.5448672416905558</code></pre>
 </div>
 </div>
 </section>
 <section id="using-a-5-degree-polynomial-on-size-a-5-degree-polynomial-on-number-of-rooms-and-also-building-type." class="level3">
 <h3 class="anchored" data-anchor-id="using-a-5-degree-polynomial-on-size-a-5-degree-polynomial-on-number-of-rooms-and-also-building-type.">Using a 5-degree polynomial on size, a 5-degree polynomial on number of rooms, and also building type.</h3>
-<div id="e80becb0" class="cell" data-execution_count="17">
+<div id="265b68f8" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ct_poly <span class="op">=</span> ColumnTransformer(</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  [(<span class="st">&quot;dummify&quot;</span>, OneHotEncoder(sparse_output <span class="op">=</span> <span class="va">False</span>), [<span class="st">&quot;Bldg Type&quot;</span>]), </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  (<span class="st">&quot;polynomial size&quot;</span>, PolynomialFeatures(<span class="dv">5</span>, include_bias<span class="op">=</span><span class="va">False</span>), [<span class="st">&quot;Gr Liv Area&quot;</span>]), </span>
@@ -3469,15 +3477,15 @@ display: block;
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  remainder <span class="op">=</span> <span class="st">&quot;drop&quot;</span></span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>).set_output(transform <span class="op">=</span> <span class="st">&quot;pandas&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="c5c69f32" class="cell" data-execution_count="18">
+<div id="fb5d727d" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>lr_poly_pipeline <span class="op">=</span> Pipeline(</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    [(<span class="st">&quot;poly create&quot;</span>, ct_dummy_get),</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;linear regression&quot;</span>, LinearRegression())]</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="5af669fb" class="cell" data-execution_count="19">
+<div id="78772bdc" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>lr_poly_pipeline.fit(X,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="42">
+<div class="cell-output cell-output-display" data-execution_count="44">
 <style>#sk-container-id-8 {
 
 --sklearn-color-text: #000;
@@ -3831,31 +3839,31 @@ display: block;
                                                   [&#39;Bldg Type&#39;]),
                                                  (&#39;select columns&#39;,
                                                   &#39;passthrough&#39;,
-                                                  [&#39;Lot Area&#39;])])),
+                                                  [&#39;Gr Liv Area&#39;])])),
                 (&#39;linear regression&#39;, LinearRegression())])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-64" type="checkbox"><label for="sk-estimator-id-64" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>Pipeline</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></div></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#39;poly create&#39;,
                  ColumnTransformer(transformers=[(&#39;dummify&#39;,
                                                   OneHotEncoder(sparse_output=False),
                                                   [&#39;Bldg Type&#39;]),
                                                  (&#39;select columns&#39;,
                                                   &#39;passthrough&#39;,
-                                                  [&#39;Lot Area&#39;])])),
+                                                  [&#39;Gr Liv Area&#39;])])),
                 (&#39;linear regression&#39;, LinearRegression())])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-65" type="checkbox"><label for="sk-estimator-id-65" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>poly create: ColumnTransformer</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for poly create: ColumnTransformer</span></a></div></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(transformers=[(&#39;dummify&#39;, OneHotEncoder(sparse_output=False),
                                  [&#39;Bldg Type&#39;]),
                                 (&#39;select columns&#39;, &#39;passthrough&#39;,
-                                 [&#39;Lot Area&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-66" type="checkbox"><label for="sk-estimator-id-66" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dummify</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Bldg Type&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-67" type="checkbox"><label for="sk-estimator-id-67" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>OneHotEncoder</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.OneHotEncoder.html">?<span>Documentation for OneHotEncoder</span></a></div></label><div class="sk-toggleable__content fitted"><pre>OneHotEncoder(sparse_output=False)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-68" type="checkbox"><label for="sk-estimator-id-68" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>select columns</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Lot Area&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-69" type="checkbox"><label for="sk-estimator-id-69" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>passthrough</div></div></label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-70" type="checkbox"><label for="sk-estimator-id-70" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>LinearRegression</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LinearRegression.html">?<span>Documentation for LinearRegression</span></a></div></label><div class="sk-toggleable__content fitted"><pre>LinearRegression()</pre></div> </div></div></div></div></div></div>
+                                 [&#39;Gr Liv Area&#39;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-66" type="checkbox"><label for="sk-estimator-id-66" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>dummify</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Bldg Type&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-67" type="checkbox"><label for="sk-estimator-id-67" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>OneHotEncoder</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.preprocessing.OneHotEncoder.html">?<span>Documentation for OneHotEncoder</span></a></div></label><div class="sk-toggleable__content fitted"><pre>OneHotEncoder(sparse_output=False)</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-68" type="checkbox"><label for="sk-estimator-id-68" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>select columns</div></div></label><div class="sk-toggleable__content fitted"><pre>[&#39;Gr Liv Area&#39;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-69" type="checkbox"><label for="sk-estimator-id-69" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>passthrough</div></div></label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-70" type="checkbox"><label for="sk-estimator-id-70" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>LinearRegression</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LinearRegression.html">?<span>Documentation for LinearRegression</span></a></div></label><div class="sk-toggleable__content fitted"><pre>LinearRegression()</pre></div> </div></div></div></div></div></div>
 </div>
 </div>
-<div id="b512cbb6" class="cell" data-execution_count="20">
+<div id="cce6a35b" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>scores4 <span class="op">=</span> cross_val_score(lr_poly_pipeline, X, y, cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">&#39;r2&#39;</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(scores4, scores4.mean())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0.06829301 0.04993565 0.08976589 0.06407874 0.14372502] 0.08315965975854658</code></pre>
+<pre><code>[0.53667199 0.52379929 0.43205901 0.56266573 0.59424739] 0.5298886811935971</code></pre>
 </div>
 </div>
 </section>
 <section id="tuning" class="level3">
 <h3 class="anchored" data-anchor-id="tuning">Tuning:</h3>
-<div id="c0c9e102" class="cell" data-execution_count="21">
+<div id="d9735d0e" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>ct_poly <span class="op">=</span> ColumnTransformer(</span>
@@ -3876,79 +3884,79 @@ display: block;
 <span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>gscv <span class="op">=</span> GridSearchCV(lr_pipeline_poly, degrees, cv <span class="op">=</span> <span class="dv">5</span>, scoring<span class="op">=</span><span class="st">&#39;r2&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="2dba643e" class="cell" data-execution_count="22">
+<div id="02c67c98" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>gscv_fitted <span class="op">=</span> gscv.fit(X, y)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>gscv_fitted.cv_results_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="45">
-<pre><code>{&#39;mean_fit_time&#39;: array([0.01608872, 0.01399937, 0.01342168, 0.01299806, 0.01397772,
-        0.01512613, 0.01503839, 0.01368027, 0.01393471, 0.0137455 ,
-        0.01314945, 0.01298461, 0.0135406 , 0.01558743, 0.01497655,
-        0.01413321, 0.01362543, 0.01369338, 0.01281247, 0.01295891,
-        0.01359544, 0.01342773, 0.01735182, 0.01387925, 0.01416502,
-        0.01347804, 0.01368618, 0.01442881, 0.01336155, 0.01311998,
-        0.01375003, 0.01380816, 0.02815757, 0.01640625, 0.01617422,
-        0.01607685, 0.01531334, 0.01548944, 0.01827793, 0.01784577,
-        0.01854382, 0.01400762, 0.01574216, 0.01426163, 0.01412077,
-        0.01420412, 0.01385474, 0.01376123, 0.01485291, 0.01698475,
-        0.01471548, 0.01407461, 0.01535263, 0.01501923, 0.02132983,
-        0.01734381, 0.0174953 , 0.01406708, 0.02928185, 0.01803708,
-        0.0158946 , 0.01567588, 0.01538692, 0.01260548, 0.01272106,
-        0.01434002, 0.01407671, 0.01528249, 0.01582217, 0.01463618,
-        0.01770639, 0.01509624, 0.01244044, 0.01242895, 0.01386251,
-        0.01901712, 0.01449676, 0.01372705, 0.01288848, 0.01970363,
-        0.01518545]),
- &#39;std_fit_time&#39;: array([0.00356119, 0.00079832, 0.0014883 , 0.00060776, 0.00149685,
-        0.00023132, 0.00073338, 0.00060353, 0.00034109, 0.00126752,
-        0.00065002, 0.00092103, 0.00069784, 0.00153434, 0.00118718,
-        0.00042172, 0.00102827, 0.00053229, 0.00099498, 0.00093007,
-        0.00058608, 0.00107984, 0.00378292, 0.00128604, 0.00091327,
-        0.00085944, 0.00083445, 0.00119867, 0.00049266, 0.00086058,
-        0.00069566, 0.00097427, 0.0210814 , 0.0014653 , 0.0013368 ,
-        0.00115019, 0.00121119, 0.00172858, 0.00298963, 0.00165465,
-        0.00158005, 0.00098732, 0.00149676, 0.00131755, 0.00061882,
-        0.00045949, 0.00047791, 0.00070736, 0.00128853, 0.00317154,
-        0.00068188, 0.00057441, 0.00088475, 0.00098036, 0.00619336,
-        0.00084681, 0.00271645, 0.00126594, 0.00897415, 0.00248841,
-        0.00249065, 0.00179895, 0.00184358, 0.0007397 , 0.00025675,
-        0.00136339, 0.00059862, 0.00065069, 0.0007635 , 0.00098106,
-        0.00634094, 0.00067502, 0.00084449, 0.00067162, 0.00080909,
-        0.00433601, 0.00243057, 0.00074431, 0.00083601, 0.00538991,
-        0.00064152]),
- &#39;mean_score_time&#39;: array([0.00895863, 0.00834684, 0.00788193, 0.0074728 , 0.00815125,
-        0.00829458, 0.00838642, 0.00826936, 0.00791078, 0.00854564,
-        0.00768328, 0.0078887 , 0.00807819, 0.0102046 , 0.00907078,
-        0.00773997, 0.00775433, 0.00824008, 0.00775971, 0.00766234,
-        0.007794  , 0.00798941, 0.00859332, 0.00839286, 0.00784478,
-        0.00787253, 0.0079103 , 0.00763807, 0.00704303, 0.0082418 ,
-        0.00793476, 0.00810156, 0.01177392, 0.00879703, 0.00955515,
-        0.01034679, 0.00934763, 0.01001639, 0.01151724, 0.00998726,
-        0.01216879, 0.00786123, 0.00876322, 0.00802341, 0.00799065,
-        0.00805607, 0.0079752 , 0.00803595, 0.00907831, 0.00867438,
-        0.00831537, 0.00848346, 0.00850081, 0.0097156 , 0.0127564 ,
-        0.01030121, 0.01022711, 0.0080636 , 0.01735868, 0.00899239,
-        0.00875278, 0.00941663, 0.00980005, 0.00722804, 0.00720835,
-        0.00747705, 0.00881639, 0.00870972, 0.00926085, 0.00854273,
-        0.00931578, 0.00873041, 0.00723109, 0.00725517, 0.00821719,
-        0.01032562, 0.00807176, 0.00762324, 0.00724893, 0.01165953,
-        0.00798998]),
- &#39;std_score_time&#39;: array([0.00165394, 0.00102697, 0.00092092, 0.00095037, 0.00133289,
-        0.0016867 , 0.00124982, 0.00085555, 0.00107541, 0.00126502,
-        0.00107197, 0.00103051, 0.00073818, 0.00248071, 0.00231919,
-        0.00118188, 0.00103014, 0.00107183, 0.00116745, 0.00099437,
-        0.00105773, 0.00076527, 0.00121729, 0.00106087, 0.00118863,
-        0.00106079, 0.00101419, 0.0009697 , 0.0008812 , 0.00075315,
-        0.00101867, 0.00108419, 0.00288822, 0.00052019, 0.00094871,
-        0.00106976, 0.00120017, 0.00174009, 0.00194516, 0.00155227,
-        0.00145303, 0.00086121, 0.00057843, 0.00084425, 0.00090963,
-        0.00089383, 0.00110895, 0.0009129 , 0.00182659, 0.00103414,
-        0.00083842, 0.00120851, 0.00083041, 0.00279499, 0.00289037,
-        0.00114564, 0.00151801, 0.00065351, 0.00605411, 0.00118993,
-        0.00146172, 0.00167671, 0.00183571, 0.00017974, 0.00016532,
-        0.00032709, 0.00149327, 0.00088197, 0.00058356, 0.00064596,
-        0.00174367, 0.00024326, 0.0006812 , 0.00048208, 0.00044225,
-        0.00319254, 0.00113657, 0.00065311, 0.00080181, 0.00283239,
-        0.0005388 ]),
+<div class="cell-output cell-output-display" data-execution_count="47">
+<pre><code>{&#39;mean_fit_time&#39;: array([0.01640458, 0.0145484 , 0.01401267, 0.01333461, 0.01410985,
+        0.0140192 , 0.01391969, 0.01399269, 0.01337938, 0.01313424,
+        0.01278825, 0.01296062, 0.01310687, 0.01393385, 0.01322298,
+        0.01367002, 0.01315465, 0.0138896 , 0.01346097, 0.01350942,
+        0.01322322, 0.01304603, 0.01376691, 0.0138114 , 0.01368103,
+        0.01405001, 0.0138536 , 0.01293421, 0.01373372, 0.01304317,
+        0.01345701, 0.01406546, 0.01380839, 0.01455894, 0.0138772 ,
+        0.01434674, 0.01346607, 0.0133204 , 0.01417603, 0.01629505,
+        0.01491365, 0.01467285, 0.01567168, 0.01686611, 0.01411123,
+        0.01380825, 0.01466064, 0.01488338, 0.01554818, 0.01585422,
+        0.01478124, 0.01432638, 0.01413765, 0.01509724, 0.01329885,
+        0.01355977, 0.01382289, 0.01444216, 0.01421332, 0.01402798,
+        0.01458354, 0.01425991, 0.01461053, 0.01385188, 0.01427703,
+        0.01412082, 0.01462636, 0.01378107, 0.01449671, 0.01411672,
+        0.01506772, 0.01510248, 0.01369758, 0.01424103, 0.01394315,
+        0.01435666, 0.01446271, 0.01428447, 0.01453047, 0.01432939,
+        0.01551642]),
+ &#39;std_fit_time&#39;: array([0.00265786, 0.00086683, 0.00132098, 0.00045604, 0.0006234 ,
+        0.00117167, 0.00101569, 0.00046227, 0.0011275 , 0.00081917,
+        0.00112875, 0.00064658, 0.00130857, 0.00089652, 0.00051777,
+        0.00082486, 0.00093289, 0.00048201, 0.0004639 , 0.00059184,
+        0.00069863, 0.00063622, 0.00109273, 0.0006486 , 0.00084082,
+        0.00064471, 0.00087656, 0.00111164, 0.00051078, 0.00084762,
+        0.00110034, 0.00092573, 0.00058415, 0.00041578, 0.00106382,
+        0.00065618, 0.00124519, 0.00042666, 0.00125938, 0.00318141,
+        0.00210412, 0.00063493, 0.00166158, 0.00191375, 0.00099259,
+        0.00082293, 0.000931  , 0.00215162, 0.00140611, 0.00262672,
+        0.0007171 , 0.00061941, 0.00095139, 0.00120867, 0.00061687,
+        0.00056539, 0.00084017, 0.0008668 , 0.00066787, 0.00057691,
+        0.00051489, 0.00034868, 0.00105099, 0.00063062, 0.00109486,
+        0.00094434, 0.00121722, 0.00092226, 0.00032412, 0.00080502,
+        0.00034312, 0.00043796, 0.00043814, 0.00109819, 0.00043498,
+        0.00084251, 0.00093001, 0.00085058, 0.00077712, 0.00034879,
+        0.00050946]),
+ &#39;mean_score_time&#39;: array([0.00855813, 0.00879307, 0.00774307, 0.00831189, 0.00811439,
+        0.00824475, 0.00791564, 0.00753965, 0.00807157, 0.0075633 ,
+        0.00763736, 0.00734921, 0.00767336, 0.00804672, 0.00776896,
+        0.00830598, 0.00815835, 0.00803356, 0.00743923, 0.0072495 ,
+        0.00791659, 0.00746574, 0.00796237, 0.0082952 , 0.00746703,
+        0.00790863, 0.00789924, 0.00810809, 0.00768476, 0.00775781,
+        0.00844884, 0.00795331, 0.00794859, 0.00804534, 0.0082839 ,
+        0.00801544, 0.00814738, 0.00775695, 0.00863352, 0.00928578,
+        0.00831947, 0.00841084, 0.00968547, 0.0094748 , 0.00909352,
+        0.00784745, 0.00844855, 0.00864763, 0.00900722, 0.0088089 ,
+        0.00809817, 0.00829644, 0.00836897, 0.00799718, 0.00808525,
+        0.00796165, 0.00805449, 0.00785308, 0.00859184, 0.00806818,
+        0.00802779, 0.00790167, 0.00813794, 0.00825768, 0.00912085,
+        0.00783496, 0.0078301 , 0.00813985, 0.00860882, 0.0079814 ,
+        0.00824413, 0.0084938 , 0.00785723, 0.00800261, 0.00822573,
+        0.0081881 , 0.00817599, 0.00832186, 0.00864415, 0.00798421,
+        0.00885272]),
+ &#39;std_score_time&#39;: array([0.001253  , 0.00130742, 0.00136822, 0.00168867, 0.00064757,
+        0.00136649, 0.00087786, 0.00098095, 0.00103007, 0.00089483,
+        0.00090175, 0.00104047, 0.00096593, 0.00085811, 0.00122823,
+        0.00089029, 0.00077153, 0.00113523, 0.00106387, 0.00074153,
+        0.00115311, 0.00106879, 0.00087662, 0.00082986, 0.00083739,
+        0.00083038, 0.00088623, 0.00088203, 0.00098457, 0.00119148,
+        0.00085315, 0.00105194, 0.00130516, 0.00117851, 0.00076626,
+        0.00108718, 0.00099752, 0.0010231 , 0.00124744, 0.00137016,
+        0.00083791, 0.00138248, 0.00150426, 0.00175209, 0.00154117,
+        0.0009157 , 0.00103729, 0.00149647, 0.00119282, 0.00142448,
+        0.00098948, 0.00089949, 0.00117955, 0.00083154, 0.00101681,
+        0.00083525, 0.00103932, 0.00113032, 0.00100254, 0.00096988,
+        0.00072719, 0.00118343, 0.00070841, 0.00120791, 0.00155954,
+        0.00090191, 0.00074792, 0.00087357, 0.00112028, 0.00097092,
+        0.00105806, 0.00098845, 0.00088105, 0.00066926, 0.00096824,
+        0.00084322, 0.00106354, 0.00063976, 0.00113973, 0.00081058,
+        0.00114465]),
  &#39;param_preprocessing__polynomial2__degree&#39;: masked_array(data=[1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2,
                     3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4,
                     5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -4271,28 +4279,27 @@ display: block;
         37, 52, 68, 73, 72, 61, 59, 23, 45, 47, 49, 68, 73], dtype=int32)}</code></pre>
 </div>
 </div>
-<div id="8b5bd601" class="cell" data-execution_count="23">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>gscv_fitted.cv_results_[<span class="st">&#39;mean_test_score&#39;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="46">
-<pre><code>array([ 0.53288244,  0.53747194,  0.55764061,  0.49921686,  0.49713958,
-        0.44472675,  0.26412025, -0.26944803, -1.83251917,  0.53238285,
-        0.53356735,  0.55685726,  0.50883091,  0.49713958,  0.44472675,
-        0.26412025, -0.26944803, -1.83251917,  0.53592417,  0.53413413,
-        0.55403905,  0.52832898,  0.49713958,  0.44472675,  0.26412025,
-       -0.26944803, -1.83251917,  0.54152875,  0.5354176 ,  0.55039243,
-        0.52501498,  0.49713958,  0.44472675,  0.26412025, -0.26944803,
-       -1.83251917,  0.54106618,  0.53026731,  0.54654926,  0.52119233,
-        0.49713958,  0.44472675,  0.26412025, -0.26944803, -1.83251917,
-        0.53486226,  0.53331356,  0.54487876,  0.53129597,  0.50474232,
-        0.44472675,  0.26412025, -0.26944803, -1.83251917,  0.08006934,
-        0.35249861,  0.55020036,  0.51274976,  0.49393389,  0.44472675,
-        0.26412025, -0.26944803, -1.83251917, -1.09028712, -0.17703818,
-        0.27389212,  0.50139601,  0.48329217,  0.44472675,  0.26412025,
-       -0.26944803, -1.83251917, -1.29658485, -0.2616797 ,  0.02750537,
-        0.5242548 ,  0.43985925,  0.30756242,  0.26412025, -0.26944803,
-       -1.83251917])</code></pre>
+<div id="3c636678" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>gscv_fitted.cv_results_[<span class="st">&#39;mean_test_score&#39;</span>].<span class="bu">max</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="48">
+<pre><code>np.float64(0.5576406091388734)</code></pre>
 </div>
 </div>
+<div id="5abd7293" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>gscv_fitted.best_score_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="49">
+<pre><code>np.float64(0.5576406091388734)</code></pre>
+</div>
+</div>
+<div id="1066f39e" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>gscv_fitted.best_params_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="50">
+<pre><code>{&#39;preprocessing__polynomial2__degree&#39;: np.int64(1),
+ &#39;preprocessing__polynomial__degree&#39;: np.int64(3)}</code></pre>
+</div>
+</div>
+<p>Best model contains: polynomial 2 of degree 1: TotRms AbvGrd polynomial 1 of degree 3: Gr Liv Area</p>
+<p>The overall best model is the model containing a 3-degree polynomial on size, number of rooms, and also building type</p>
 </section>
 
 </main>

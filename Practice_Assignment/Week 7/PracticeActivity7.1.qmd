@@ -32,7 +32,7 @@ y=ames['SalePrice']
 ```{python}
 ct_twovars = ColumnTransformer(
   [
-    ("dropstuff", "passthrough", ["Lot Area", "TotRms AbvGrd"]) #"passthrough" just keeps the lot area and TotRms AbcGrd can also use StandardScalar
+    ("dropstuff", "passthrough", ["Gr Liv Area", "TotRms AbvGrd"]) #"passthrough" just keeps the lot area and TotRms AbcGrd can also use StandardScalar
   ],
   remainder = "drop"
 ).set_output(transform = "pandas")
@@ -59,7 +59,7 @@ print(scores1, scores1.mean())
 ```{python}
 ct_dummify_and_select = ColumnTransformer(
   [("dummify", OneHotEncoder(sparse_output = False), ["Bldg Type"]),
-  ("select columns", "passthrough", ["Lot Area", "TotRms AbvGrd"])], 
+  ("select columns", "passthrough", ["Gr Liv Area", "TotRms AbvGrd"])], 
   remainder = "drop"
 ).set_output(transform = "pandas")
 ```
@@ -84,7 +84,7 @@ print(scores2, scores2.mean())
 ```{python}
 ct_dummy_get = ColumnTransformer(
   [("dummify", OneHotEncoder(sparse_output = False), ["Bldg Type"]),
-  ("select columns", "passthrough", ["Lot Area"])], 
+  ("select columns", "passthrough", ["Gr Liv Area"])], 
   remainder = "drop"
 ).set_output(transform = "pandas")
 ```
@@ -92,10 +92,10 @@ ct_dummy_get = ColumnTransformer(
 ```{python}
 ct_int_size_bldg = ColumnTransformer(
   [
-    ("interaction 1Fam", PolynomialFeatures(interaction_only = True), ["select columns__Lot Area", "dummify__Bldg Type_1Fam"]),
-    ("interaction TwnhsE", PolynomialFeatures(interaction_only = True), ["select columns__Lot Area", "dummify__Bldg Type_TwnhsE"]),
-    ("interaction Twnhs", PolynomialFeatures(interaction_only = True), ["select columns__Lot Area", "dummify__Bldg Type_Twnhs"]), 
-    ("interaction Duplex", PolynomialFeatures(interaction_only = True), ["select columns__Lot Area", "dummify__Bldg Type_Duplex"])
+    ("interaction 1Fam", PolynomialFeatures(interaction_only = True), ["select columns__Gr Liv Area", "dummify__Bldg Type_1Fam"]),
+    ("interaction TwnhsE", PolynomialFeatures(interaction_only = True), ["select columns__Gr Liv Area", "dummify__Bldg Type_TwnhsE"]),
+    ("interaction Twnhs", PolynomialFeatures(interaction_only = True), ["select columns__Gr Liv Area", "dummify__Bldg Type_Twnhs"]), 
+    ("interaction Duplex", PolynomialFeatures(interaction_only = True), ["select columns__Gr Liv Area", "dummify__Bldg Type_Duplex"])
   ],
   remainder = "drop"
 ).set_output(transform = "pandas")
@@ -176,6 +176,20 @@ gscv_fitted.cv_results_
 ```
 
 ```{python}
-gscv_fitted.cv_results_['mean_test_score']
+gscv_fitted.cv_results_['mean_test_score'].max()
 ```
 
+
+```{python}
+gscv_fitted.best_score_
+```
+
+```{python}
+gscv_fitted.best_params_
+```
+
+Best model contains: 
+polynomial 2 of degree 1: TotRms AbvGrd
+polynomial 1 of degree 3: Gr Liv Area
+
+The overall best model is the model containing a 3-degree polynomial on size, number of rooms, and also building type
