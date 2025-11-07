@@ -15,6 +15,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import cross_val_score
 ```
 
 ```{python}
@@ -49,8 +50,8 @@ lr_size_num_pipeline.fit(X,y)
 ```
 
 ```{python}
-y_preds = lr_size_num_pipeline.predict(X)
-r2_score(y, y_preds)
+scores1 = cross_val_score(lr_size_num_pipeline, X, y, cv=5, scoring='r2')
+print(scores1, scores1.mean())
 ```
 
 ### Using size, number of rooms, and building type 
@@ -75,8 +76,8 @@ lr_size_num_bldg_pipeline.fit(X,y)
 ```
 
 ```{python}
-y_preds_2 = lr_size_num_bldg_pipeline.predict(X)
-r2_score(y, y_preds_2)
+scores2 = cross_val_score(lr_size_num_bldg_pipeline, X, y, cv=5, scoring='r2')
+print(scores2, scores2.mean())
 ```
 
 ### Using size and building type, and their interaction
@@ -113,17 +114,68 @@ lr_size_bldg_pipeline.fit(X,y)
 ```
 
 ```{python}
-y_preds_2 = lr_size_bldg_pipeline.predict(X)
-r2_score(y, y_preds_2)
+scores3 = cross_val_score(lr_size_bldg_pipeline, X, y, cv=5, scoring='r2')
+print(scores3, scores3.mean())
 ```
 
 ### Using a 5-degree polynomial on size, a 5-degree polynomial on number of rooms, and also building type.
 ```{python}
 ct_poly = ColumnTransformer(
   [("dummify", OneHotEncoder(sparse_output = False), ["Bldg Type"]), 
-  ("polynomial size", PolynomialFeatures(interaction_only = True), ["select columns__Lot Area", "dummify__Bldg Type_1Fam"]), 
-  ("polynomial num rooms", PolynomialFeatures(interaction_only=False),  
+  ("polynomial size", PolynomialFeatures(5, include_bias=False), ["Gr Liv Area"]), 
+  ("polynomial num rooms", PolynomialFeatures(5, include_bias=False), ["TotRms AbvGrd"]),  
   ],
   remainder = "drop"
 ).set_output(transform = "pandas")
 ```
+
+
+```{python}
+lr_poly_pipeline = Pipeline(
+    [("poly create", ct_dummy_get),
+    ("linear regression", LinearRegression())]
+)
+```
+
+```{python}
+lr_poly_pipeline.fit(X,y)
+```
+
+```{python}
+scores4 = cross_val_score(lr_poly_pipeline, X, y, cv=5, scoring='r2')
+print(scores4, scores4.mean())
+```
+
+### Tuning: 
+```{python}
+from sklearn.model_selection import GridSearchCV
+
+ct_poly = ColumnTransformer(
+  [
+    ("dummify", OneHotEncoder(sparse_output = False), ["Bldg Type"]),
+    ("polynomial", PolynomialFeatures(), ["Gr Liv Area"]), 
+    ("polynomial2", PolynomialFeatures(), ["TotRms AbvGrd"])
+  ],
+  remainder = "drop"
+)
+
+lr_pipeline_poly = Pipeline(
+  [("preprocessing", ct_poly),
+  ("linear_regression", LinearRegression())]
+).set_output(transform="pandas")
+
+degrees = {'preprocessing__polynomial__degree': np.arange(1, 10), 'preprocessing__polynomial2__degree': np.arange(1,10)}
+
+gscv = GridSearchCV(lr_pipeline_poly, degrees, cv = 5, scoring='r2')
+```
+
+```{python}
+gscv_fitted = gscv.fit(X, y)
+
+gscv_fitted.cv_results_
+```
+
+```{python}
+gscv_fitted.cv_results_['mean_test_score']
+```
+
