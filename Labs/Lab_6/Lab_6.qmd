@@ -1,0 +1,571 @@
+---
+title: "Lab 6"
+author: Sadie Akel
+format: 
+    html: 
+        embed-resources: true
+execute: 
+    warning: false
+---
+
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet 
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import make_column_selector, ColumnTransformer
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+```
+
+## Part 0: Data Loading and Cleaning
+```{python}
+hitters = pd.read_csv("~/Desktop/GSB 544/Labs/Lab_6/Hitters.csv", sep=",")
+hitters.head()
+```
+
+First step in our data cleaning is to remove NaN values (most NaN values are in the Salary column which is the column we are looking to predict). Additionally, we will remove any columns with mostly NaN values. 
+```{python}
+# Get rid of columns with mostly NaN values
+good_cols = hitters.isna().sum() < 100
+hitters = hitters.loc[:,good_cols]
+
+# Drop other NAs
+hitters = hitters.dropna()
+```
+
+Now, we make sure that our variable typesare what we want: 
+```{python}
+hitters.info()
+```
+
+Everything looks good! Now we can proceed with creating our models. 
+
+## Part 1: Different Model Specs
+
+```{python}
+X = hitters.drop(["Salary"], axis = 1) 
+y = hitters["Salary"]
+```
+
+### A: Regression without regularization 
+
+1. Creating the pipeline
+```{python}
+ct_dummify = ColumnTransformer(
+  [
+    ("dummify", 
+    OneHotEncoder(sparse_output = False, handle_unknown='ignore'), 
+    make_column_selector(dtype_include=object)), 
+    ("standardize", 
+    StandardScaler(), 
+    make_column_selector(dtype_include=np.number))
+  ],
+  remainder = "passthrough").set_output(transform = "pandas")
+```
+
+```{python}
+lr_all_vars_pipeline= Pipeline(
+    [("dummify", ct_dummify),
+    ("linear regression", LinearRegression())]
+)
+```
+
+2. Fitting the pipeline to the full dataset
+```{python}
+all_vars_fit = lr_all_vars_pipeline.fit(X, y)
+```
+
+```{python}
+feature_names = lr_all_vars_pipeline.named_steps['dummify'].get_feature_names_out() #used google for the .get_feature_names_out() function
+coefs = lr_all_vars_pipeline.named_steps['linear regression'].coef_
+
+coef_df = pd.DataFrame({
+    'feature': feature_names,
+    'coefficient': coefs
+})
+
+coef_df = coef_df.sort_values(by='coefficient', ascending=False)
+
+print(coef_df)
+```
+
+The three largest in magnitude coefficients are the standardiszed CRuns, Hits, and CAtBat. The coefficient for standardized CRuns is 480.747135, meaning we expect that, while holding other variables constant, a one SD increase in Career Home Runs corresponds to an increase in salary by 480.74 thousand dollars.The coefficient for standardized Hits is 337.830479, meaning we expect that, while holding other variables constant, a one SD increase in Number of hits in 1986 corresponds to an increase in salary by 337.83 thousand dollars. Lastly, the coefficient for standardized CAtBat is -391.04, meaning we expect that, while holding other variables constant, a one SD increase in number of careet At Bats corresponds to a decrease in salary by 391.04 thousand dollars. The negative coefficient makes sense in context because At Bats either result in a hit or in an out. Since hits are already accounted for, we expect that the At Bat feature accounts for mostly outs. 
+
+3. Using cross validation to estimate the MSE 
+```{python}
+scores=-cross_val_score(lr_all_vars_pipeline, X, y, cv = 5, scoring = 'neg_mean_squared_error')
+print(scores, scores.mean())
+```
+
+Shows the cross-validated MSE of this model is 121136.31031816888. 
+
+### B: Ridge Regression 
+
+1. Pipeline that includes all explanatory variables and performs regular Ridge regression: 
+
+```{python}
+def create_pipeline(type): 
+    all_vars_pipeline= Pipeline(
+        [("dummify", ct_dummify),
+        ("regression", type())]
+    )
+    return all_vars_pipeline
+
+```
+
+```{python}
+def create_pipeline_alpha(type, x): 
+    all_vars_pipeline= Pipeline(
+        [("dummify", ct_dummify),
+        ("regression", type(alpha=x))]
+    )
+    return all_vars_pipeline
+```
+
+```{python}
+ridge_pipeline=create_pipeline(Ridge)
+ridge_pipeline.fit(X,y)
+```
+
+2. Using cross validation to tune the lambda hyperparameter: 
+```{python}
+lambdas = {'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100, 500, 1000)}
+gscv = GridSearchCV(ridge_pipeline, lambdas, cv = 5, scoring='neg_mean_squared_error')
+```
+
+```{python}
+gscv_fitted = gscv.fit(X, y)
+gscv_fitted.cv_results_['mean_test_score']
+pd.DataFrame(data = {"alphas": (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100, 500, 1000), "scores": gscv_fitted.cv_results_['mean_test_score']})
+```
+
+Lambda=1 seems to be the best lambda score 
+
+
+3. Interpeting coefficients: 
+```{python}
+ridge_pipeline_1=create_pipeline_alpha(Ridge, 1)
+ridge_pipeline_1.fit(X,y)
+```
+
+```{python}
+feature_names = ridge_pipeline_1.named_steps['dummify'].get_feature_names_out() 
+coefs = ridge_pipeline_1.named_steps['regression'].coef_
+
+ridge_coef_df = pd.DataFrame({
+    'feature': feature_names,
+    'coefficient': coefs
+})
+
+ridge_coef_df = ridge_coef_df.sort_values(by='coefficient', ascending=False)
+
+print(ridge_coef_df)
+```
+
+16    standardize__CRuns   320.412169
+7      standardize__Hits   296.645050
+6     standardize__AtBat  -270.686441
+
+For each increase in one standard deviaton of Career runs we expect Salary to increase by about 320 thousand dollars, and for each increase in one standard deviation of hits in 1986 we expect Salary to increase by 297 thousand dollars. For each increase in one standard deviation in At Bats in 1986, we expect Salary to decrease by 270 thousand dollars. 
+
+
+
+4. MSE if this pipeline was used to predict 1986 salary
+```{python}
+scores_ridge=-cross_val_score(ridge_pipeline_1, X, y, cv = 5, scoring = 'neg_mean_squared_error')
+print(scores_ridge, scores_ridge.mean())
+```
+
+We expect the MSE to be 119144.4326769158. 
+
+### C: Lasso Regression 
+
+1. Creating the pipeline
+```{python}
+lasso_pipeline=create_pipeline(Lasso)
+lasso_pipeline.fit(X,y)
+```
+
+2. Using cross validation to tune the hyperparameter 
+```{python}
+lambdas = {'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100, 500, 1000)}
+gscv2 = GridSearchCV(lasso_pipeline, lambdas, cv = 5, scoring='neg_mean_squared_error')
+```
+
+```{python}
+gscv2_fitted = gscv2.fit(X, y)
+gscv2_fitted.cv_results_['mean_test_score']
+pd.DataFrame(data = {"alphas": (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100, 500, 1000), "scores": gscv2_fitted.cv_results_['mean_test_score']})
+```
+
+Optimal lambda is 1. 
+
+3. Fitting the pipeline with the chosen lambda to the entire dataset
+```{python}
+lasso_pipeline_1=create_pipeline_alpha(Lasso, 1)
+lasso_pipeline_1.fit(X,y)
+```
+
+```{python}
+feature_names = lasso_pipeline_1.named_steps['dummify'].get_feature_names_out() 
+coefs = lasso_pipeline_1.named_steps['regression'].coef_
+
+lasso_coef_df = pd.DataFrame({
+    'feature': feature_names,
+    'coefficient': coefs
+})
+
+lasso_coef_df = lasso_coef_df.sort_values(by='coefficient', ascending=False)
+
+print(lasso_coef_df)
+```
+
+16    standardize__CRuns  3.755655e+02
+7      standardize__Hits  3.043595e+02
+6     standardize__AtBat -2.823710e+02
+
+For each increase in one standard deviaton of Career runs we expect Salary to increase by about 376 thousand dollars, and for each increase in one standard deviation of hits in 1986 we expect Salary to increase by 304 thousand dollars. For each increase in one standard deviation in At Bats in 1986, we expect Salary to decrease by 282 thousand dollars. 
+
+
+
+4. 
+```{python}
+scores_lasso=-cross_val_score(lasso_pipeline_1, X, y, cv = 5, scoring = 'neg_mean_squared_error')
+print(scores_lasso, scores_lasso.mean())
+```
+
+We expect the MSE to be 119761.58740741308. 
+
+### D: Elastic Net 
+1. Creating the Pipeline: 
+```{python}
+elastic_pipeline=create_pipeline(ElasticNet)
+elastic_pipeline.fit(X,y)
+```
+
+2. Using cross validation to tune the pipeline: 
+```{python}
+parameters= {
+    'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100, 500, 1000), 
+    'regression__l1_ratio': (0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99)
+}
+
+gscv3 = GridSearchCV(elastic_pipeline, parameters, cv = 5, scoring='neg_mean_squared_error')
+```
+
+```{python}
+gscv3_fitted = gscv3.fit(X, y)
+print(gscv3_fitted.best_score_, gscv3_fitted.best_params_)
+```
+
+Cross validation showed that the optimal lambda value is 0.01, and the optimal l1_ratio is 0.01.  
+
+3. Fitting the tuned pipeline to the full dataset: 
+
+```{python}
+elastic_spec_pipeline= Pipeline(
+    [("dummify", ct_dummify),
+    ("elastic net", ElasticNet(alpha=0.01, l1_ratio=0.01))]
+)
+```
+
+```{python}
+elastic_spec_pipeline.fit(X,y)
+```
+
+```{python}
+feature_names = elastic_spec_pipeline.named_steps['dummify'].get_feature_names_out() 
+coefs = elastic_spec_pipeline.named_steps['elastic net'].coef_
+
+elastic_coef_df = pd.DataFrame({
+    'feature': feature_names,
+    'coefficient': coefs
+})
+
+elastic_coef_df = elastic_coef_df.sort_values(by='coefficient', ascending=False)
+
+print(elastic_coef_df)
+```
+
+7      standardize__Hits   250.557145
+16    standardize__CRuns   227.793187
+6     standardize__AtBat  -233.842932
+
+
+For each increase in one standard deviaton of Career runs we expect Salary to increase by about 228 thousand dollars, and for each increase in one standard deviation of hits in 1986 we expect Salary to increase by 251 thousand dollars. For each increase in one standard deviation in At Bats in 1986, we expect Salary to decrease by 234 thousand dollars. 
+
+4. Expected MSE
+```{python}
+scores_elastic=-cross_val_score(elastic_spec_pipeline, X, y, cv = 5, scoring = 'neg_mean_squared_error')
+print(scores_elastic, scores_elastic.mean())
+```
+
+The expected MSE is 118959.30308411302. 
+
+
+## Part 2: Variable Selection 
+
+From the coefficients in the models tested, I claim that the most important variable is Career Runs. 
+
+The 5 most important numeric variables are: Career runs, Hits in 1986, Career RBI, At Bat in 1986, and Career Walks. 
+
+The most important categorical variable is Division. 
+
+We will now explore the previous models using only these variables. 
+
+### 1: Using only the best numeric variable (Career Runs)
+```{python}
+ct_select_one = ColumnTransformer(
+  [
+    ("select", StandardScaler(), ["CRuns"])
+  ],
+  remainder = "drop")
+```
+
+```{python}
+lr_pipeline_cruns= Pipeline(
+    [("select", ct_select_one),
+    ("regression", LinearRegression())]
+)
+
+ridge_pipeline_cruns= Pipeline(
+    [("select", ct_select_one),
+    ("regression", Ridge())]
+)
+
+lasso_pipeline_cruns= Pipeline(
+    [("select", ct_select_one),
+    ("regression", Lasso())]
+)
+
+elastic_pipeline_cruns= Pipeline(
+    [("select", ct_select_one),
+    ("regression", ElasticNet())]
+)
+
+lr_pipeline_cruns.fit(X,y)
+ridge_pipeline_cruns.fit(X,y)
+lasso_pipeline_cruns.fit(X,y)
+elastic_pipeline_cruns.fit(X,y)
+```
+
+
+```{python}
+parameters= {
+    'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100), 
+    'regression__l1_ratio': (0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99)
+}
+
+lambdas = {'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100)}
+gscv4 = GridSearchCV(ridge_pipeline_cruns, lambdas, cv = 5, scoring='neg_mean_squared_error')
+gscv5= GridSearchCV(lasso_pipeline_cruns, lambdas, cv = 5, scoring='neg_mean_squared_error')
+gscv6= GridSearchCV(elastic_pipeline_cruns, parameters, cv = 5, scoring='neg_mean_squared_error')
+```
+
+```{python}
+gscv4_fitted = gscv4.fit(X, y)
+gscv5_fitted = gscv5.fit(X, y)
+gscv6_fitted = gscv6.fit(X, y)
+```
+
+```{python}
+scores_cruns = cross_val_score(lr_pipeline_cruns, X, y, cv=5, scoring='neg_mean_squared_error')
+print(scores_cruns.mean())
+print(gscv4_fitted.best_score_, gscv4_fitted.best_params_)
+print(gscv5_fitted.best_score_, gscv5_fitted.best_params_)
+print(gscv6_fitted.best_score_, gscv6_fitted.best_params_)
+```
+
+Elastic Net performed the best on only one numeric variable with an MSE of 143655.07604766646, lambda=0.1, l1 ratio=0.5
+
+### 2: Using 5 best numeric variables 
+```{python}
+ct_select_5 = ColumnTransformer(
+  [
+    ("select", StandardScaler(), ["CRuns", "Hits", "CRBI", "AtBat", "CWalks"])
+  ],
+  remainder = "drop")
+```
+
+```{python}
+lr_pipeline_5= Pipeline(
+    [("select", ct_select_5),
+    ("regression", LinearRegression())]
+)
+
+ridge_pipeline_5= Pipeline(
+    [("select", ct_select_5),
+    ("regression", Ridge())]
+)
+
+lasso_pipeline_5= Pipeline(
+    [("select", ct_select_5),
+    ("regression", Lasso())]
+)
+
+elastic_pipeline_5= Pipeline(
+    [("select", ct_select_5),
+    ("regression", ElasticNet())]
+)
+
+lr_pipeline_5.fit(X,y)
+ridge_pipeline_5.fit(X,y)
+lasso_pipeline_5.fit(X,y)
+elastic_pipeline_5.fit(X,y)
+```
+
+```{python}
+parameters= {
+    'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100), 
+    'regression__l1_ratio': (0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99)
+}
+
+lambdas = {'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100)}
+fivebest1 = GridSearchCV(ridge_pipeline_5, lambdas, cv = 5, scoring='neg_mean_squared_error')
+fivebest2= GridSearchCV(lasso_pipeline_5, lambdas, cv = 5, scoring='neg_mean_squared_error')
+fivebest3= GridSearchCV(elastic_pipeline_5, parameters, cv = 5, scoring='neg_mean_squared_error')
+```
+
+```{python}
+fivebest1_fitted = fivebest1.fit(X, y)
+fivebest2_fitted = fivebest2.fit(X, y)
+fivebest3_fitted = fivebest3.fit(X, y)
+```
+
+```{python}
+scores_5 = cross_val_score(lr_pipeline_5, X, y, cv=5, scoring='neg_mean_squared_error')
+print(scores_5.mean())
+print(fivebest1_fitted.best_score_, fivebest1_fitted.best_params_)
+print(fivebest2_fitted.best_score_, fivebest2_fitted.best_params_)
+print(fivebest3_fitted.best_score_, fivebest3_fitted.best_params_)
+```
+
+Elastic Net performs the best on these variables with lambda value 0.01, ratio 0.01, and an MSE of 124986.74440429464. 
+
+### 3: 5 best numeric and their interaction with categorical 
+```{python}
+ct_dummify = ColumnTransformer(
+  [
+    ("dummify", OneHotEncoder(sparse_output = False, handle_unknown='ignore'), ["Division"]), 
+    ("select", StandardScaler(), ["CRuns", "Hits", "CRBI", "AtBat", "CWalks"])
+  ],
+  remainder = "drop").set_output(transform = "pandas")
+```
+
+```{python}
+ct_int = ColumnTransformer(
+    [
+    ("CRunsInt", PolynomialFeatures(interaction_only=True), ["select__CRuns", "dummify__Division_E"]), 
+    ("HitsInt", PolynomialFeatures(interaction_only=True), ["select__Hits", "dummify__Division_E"]), 
+    ("CRBIInt", PolynomialFeatures(interaction_only=True), ["select__CRBI", "dummify__Division_E"]), 
+    ("CWalks", PolynomialFeatures(interaction_only=True), ["select__CWalks", "dummify__Division_E"])
+    ],
+    remainder="drop"
+).set_output(transform = "pandas")
+```
+
+
+```{python}
+lr_pipeline_int= Pipeline(
+    [("dummify", ct_dummify),
+    ("interaction", ct_int), 
+    ("regression", LinearRegression())]
+)
+
+ridge_pipeline_int= Pipeline(
+    [("dummify", ct_dummify),
+    ("interaction", ct_int), 
+    ("regression", Ridge())]
+)
+
+lasso_pipeline_int= Pipeline(
+    [("dummify", ct_dummify),
+    ("interaction", ct_int), 
+    ("regression", Lasso())]
+)
+
+elastic_pipeline_int= Pipeline(
+    [("dummify", ct_dummify),
+    ("interaction", ct_int), 
+    ("regression", ElasticNet())]
+)
+```
+
+
+```{python}
+lr_pipeline_int.fit(X,y)
+ridge_pipeline_int.fit(X,y)
+lasso_pipeline_int.fit(X,y)
+elastic_pipeline_int.fit(X,y)
+```
+
+```{python}
+parameters= {
+    'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100), 
+    'regression__l1_ratio': (0, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99)
+}
+
+lambdas = {'regression__alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100)}
+int1 = GridSearchCV(ridge_pipeline_int, lambdas, cv = 5, scoring='neg_mean_squared_error')
+int2 = GridSearchCV(lasso_pipeline_int, lambdas, cv = 5, scoring='neg_mean_squared_error')
+int3 = GridSearchCV(elastic_pipeline_int, parameters, cv = 5, scoring='neg_mean_squared_error')
+```
+
+```{python}
+int1_fitted = int1.fit(X, y)
+int2_fitted = int2.fit(X, y)
+int3_fitted = int3.fit(X, y)
+```
+
+```{python}
+scores_int = cross_val_score(lr_pipeline_int, X, y, cv=5, scoring='neg_mean_squared_error')
+print(scores_int.mean())
+print(int1_fitted.best_score_, int1_fitted.best_params_)
+print(int2_fitted.best_score_, int2_fitted.best_params_)
+print(int3_fitted.best_score_, int3_fitted.best_params_)
+```
+
+Ridge has the best model with a lambda value of 100, and MSE of 120939.12513813753. 
+
+Overall, the best model was the Ridge model using a lambda value of 100 with the 5 numeric variables and their interaction with division. This model recieved a MSE value of 120939. 
+
+## Part 3: Discussion
+
+### A: Ridge
+For the most part, the coefficients had the same order of extremity as they did in the linear regression. The coefficients that had a higher effect on Salary were dampened a bit in the Ridge Regression, but the coefficients that displayed a minor effect on salary had very similar values between the linear and ridge regression. This makes sense as the ridge regression generally dampens the more extreme predictors in order to prevent overfitting, as we care about more than just the SSE. 
+
+### B: Lasso
+I got the optimal lambda to be 1 on the first model (containing all of the predictors), 10 on the second model containing only one variable, 1 on the model containing 5 variables, and 10 on the model containing 5 variables and their interaction. This makes sense because we would expect that with more predictors we would want to decrease the SSE more and when there is one predictor the coefficient has more weight so we would want to focus more on that. The smallest MSE value that resulted from the lasso regression is the model containing all variables. This makes sense due to how the lasso regression can make coefficients zero, so with lasso regression our variable selection ismore built in. Thus, we keep only influencial variables.  
+
+
+### C: Elastic Net
+Generally, our elastic net models usually have a smaller MSE than the Linear, Ridge, and Lasso regression models. This makes sense since the elastic net models contain both penalties so we can select pros from both the ridge and lasso models. Additionally, we can consider the l1 ratio parameter, and if this parameter is either 0 or 1 it will be fully either the ridge or lasso model. So, we can infer that the elastic net model is at least as good as the ridge/lasso models. 
+
+## Part 4: Final Model 
+
+The final model is the elastic net model with alpha=0.01 and l1_ratio=0.01. We will now plot: 
+```{python}
+y_pred = elastic_spec_pipeline.predict(X)
+plt.scatter(y, y_pred)
+x = np.linspace(0, 2500, 100)
+z=x
+plt.plot(x, z, label='z = x', color='blue')
+
+plt.xlabel("Actual")
+plt.ylabel("Predicted")
+plt.show()
+```
+
+```{python}
+scoresr2 = cross_val_score(elastic_spec_pipeline, X, y, cv=5, scoring='r2')
+print(scoresr2.mean())
+```
+
+The model appears to fit the data relatively well, as most points are close to the y pred=y line. However, the slope appears slightly too steep, which suggests that some of our predictions were too low at lower salary points and too high at higher salary points. Also, the cross validated r2 of this model is 0.359, meaning this model only explains 35.9% of variability in Salary which suggests that we do not have a full picture of players salaries based on the predictors in this model. 
+
