@@ -1,0 +1,420 @@
+---
+title: "Lab 7"
+format: 
+    html: 
+        embed-resources: true
+execute: 
+    warning: false
+---
+
+## Importing the Dataset and Loading Necessary Libraries
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, LogisticRegression
+from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict
+from sklearn.metrics import r2_score, confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score, ConfusionMatrixDisplay
+from sklearn.pipeline import Pipeline
+from sklearn.compose import make_column_selector, ColumnTransformer
+from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+from palmerpenguins import load_penguins
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
+
+```
+
+```{python}
+ha = pd.read_csv("https://www.dropbox.com/s/aohbr6yb9ifmc8w/heart_attack.csv?dl=1")
+```
+```{python}
+ha=ha.dropna()
+```
+```{python}
+ha.info()
+```
+
+Note that all variables (even categorical variables) are considered integers in this dataset. We must change these variables into categorical objects so we can later dummify them. 
+
+```{python}
+ha["sex"]=ha["sex"].astype("str")
+ha["cp"]=ha["cp"].astype("str")
+ha["restecg"]=ha["restecg"].astype("str")
+ha["output"]=ha["output"].astype("str")
+```
+
+```{python}
+ha.info()
+```
+```{python}
+ha["cp"].unique()
+```
+
+This has been fixed! Now, we can proceed to analysis of our dataset. 
+
+## Part 1: Fitting Models
+We will use different types of models to try and classify patients based on characteristics into categories of either at risk for a heart attack, or not at risk of a heart attack. 
+
+Initial Column Transformers and X and y: 
+```{python}
+y=ha["output"]
+X=ha.drop(columns="output")
+```
+
+```{python}
+ct = ColumnTransformer(
+  [
+    ("dummify", OneHotEncoder(sparse_output = False, handle_unknown='ignore'), make_column_selector(dtype_include=object)),  
+    ("standardize", StandardScaler(), make_column_selector(dtype_include=np.number))
+  ],
+  remainder = "drop"
+).set_output(transform = "pandas")
+```
+
+
+### Q1: KNN
+
+Trying the full model: 
+```{python}
+knn_pipeline=Pipeline([
+    ("preprocessing", ct), 
+    ("knn", KNeighborsClassifier())
+])
+
+knn_pipeline.fit(X,y)
+```
+
+Now, we tune the k value: 
+```{python}
+k_value = {'knn__n_neighbors': (5, 10, 20, 30, 40, 45, 50, 55, 60, 70, 80, 90, 100)}
+
+gscvknn = GridSearchCV(knn_pipeline, k_value, cv = 5, scoring='roc_auc')
+gscvknn_fitted = gscvknn.fit(X, y)
+print(gscvknn_fitted.best_score_, gscvknn_fitted.best_params_)
+```
+
+The ROC-AUC value is highest when the the k value is 50, where for this model we recieve a ROC-AUC value of 0.822. 
+
+Trying other models: 
+
+First, we try a model that removes sex from the model. 
+```{python}
+y_reduced_knn=ha["output"]
+X_reduced_knn=ha.drop(columns=["output", "sex"])
+```
+
+```{python}
+knn_reduced_pipeline=Pipeline([
+    ("preprocessing", ct), 
+    ("knn", KNeighborsClassifier())
+])
+
+knn_reduced_pipeline.fit(X_reduced_knn,y_reduced_knn)
+```
+
+```{python}
+k_value = {'knn__n_neighbors': (5, 10, 20, 30, 40, 45, 50, 55, 60, 70, 80, 90, 100)}
+
+gscvknn2 = GridSearchCV(knn_reduced_pipeline, k_value, cv = 5, scoring='roc_auc')
+gscvknn2_fitted = gscvknn2.fit(X_reduced_knn, y_reduced_knn)
+print(gscvknn2_fitted.best_score_, gscvknn2_fitted.best_params_)
+```
+
+The ROC-AUC value is highest when the the k value is 55, where for this model we recieve a ROC-AUC value of 0.789. So far, our first model out performs this model.
+
+Now, we will proceed to try a model including an interaction effect between cholesterol and resting electrocardiographic results: 
+
+```{python}
+ct_int = ColumnTransformer(
+    [
+        ("interaction0", PolynomialFeatures(interaction_only=True), ["standardize__chol", "dummify__restecg_0"]), 
+        ("interaction1", PolynomialFeatures(interaction_only=True), ["standardize__chol", "dummify__restecg_1"])
+    ], 
+  remainder = "passthrough"
+).set_output(transform = "pandas")
+```
+
+```{python}
+knn_int_pipeline=Pipeline([
+    ("preprocessing", ct), 
+    ("interaction", ct_int),
+    ("knn", KNeighborsClassifier())
+])
+
+knn_int_pipeline.fit(X,y)
+```
+
+```{python}
+k_value = {'knn__n_neighbors': (5, 10, 20, 30, 40, 45, 50, 55, 60, 70, 80, 90, 100)}
+
+gscvknn3 = GridSearchCV(knn_int_pipeline, k_value, cv = 5, scoring='roc_auc')
+gscvknn3_fitted = gscvknn3.fit(X, y)
+print(gscvknn3_fitted.best_score_, gscvknn3_fitted.best_params_)
+```
+
+The ROC-AUC value is highest when the the k value is 40, where for this model we recieve a ROC-AUC value of 0.81267. So far, our first model out performs this model.
+
+The best model based on the ROC-AUC value is the first model we tried (containing all predictors and no interaction term), with a k value of 50. We will now fit this complete model: 
+```{python}
+knn_pipeline_best=Pipeline([
+    ("preprocessing", ct), 
+    ("knn", KNeighborsClassifier(n_neighbors=50))
+])
+
+knn_pipeline_best.fit(X,y)
+```
+
+Cross-validated ROC-AUC score: 
+```{python}
+scores_knn_best = cross_val_score(knn_pipeline_best, X, y, cv=5, scoring='roc_auc')
+print(scores_knn_best.mean())
+```
+
+The cross-validated ROC-AUC score is 0.8222514588859416. 
+
+Confusion matrix for this model: 
+```{python}
+y_pred_cv = cross_val_predict(knn_pipeline_best, X, y, cv=5) 
+cm = confusion_matrix(y, y_pred_cv)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm) #used google/chat gpt for the ConfusionMatrixDisplay  
+disp.plot(cmap="Blues")
+print(cm)
+```
+
+This confusion matrix showed that, with this best KNN model, in our cross validated predictions we got 101 true positives (we predicted at risk of heart attack and subject was truly at risk of hear attack), 99 true negatives (we predicted no risk of heart attack and subject was not at risk of heart attack). We, however, predicted that 28 subjects were at risk of a heart attach when they were not (false positives) and predicted that 45 subjects were not at risk of a heart attack when they were at risk of a heart attack (false negatives). 
+
+### Q2: Logistic Regression 
+```{python}
+logistic_regression_pipeline=Pipeline(
+    [("preprocessing", ct), 
+    ("logistic regression", LogisticRegression())]
+)
+logistic_regression_pipeline.fit(X,y)
+```
+
+```{python}
+params = {
+    'logistic regression__penalty': ['l1', 'l2', 'elasticnet', None],
+    'logistic regression__C': [0.001, 0.01, 0.1, 1, 10, 100]
+}
+
+gscvlogistic = GridSearchCV(logistic_regression_pipeline, params, cv = 5, scoring='roc_auc')
+gscvlogistic_fitted = gscvlogistic.fit(X, y)
+print(gscvlogistic_fitted.best_score_, gscvlogistic_fitted.best_params_)
+```
+
+The best ROC-AUC score of this model is 0.8644 and is reached when the penalty strength C=0.1 and the logistic regression penalty is of type lasso. 
+
+Now, we will try to eliminate some predictors from our model to see if we get a better ROC-AUC value from a simpler model and prevent overfitting. 
+```{python}
+X_reduced_logistic=ha.drop(columns=["output", "age"])
+
+logistic_regression_pipeline_reduced=Pipeline(
+    [("preprocessing", ct), 
+    ("logistic regression", LogisticRegression())]
+)
+logistic_regression_pipeline_reduced.fit(X_reduced_logistic,y)
+
+
+params = {
+    'logistic regression__penalty': ['l1', 'l2', 'elasticnet', None],
+    'logistic regression__C': [0.001, 0.01, 0.1, 1, 10, 100]
+}
+
+gscvlogistic_reduced = GridSearchCV(logistic_regression_pipeline_reduced, params, cv = 5, scoring='roc_auc')
+gscvlogistic_reduced_fitted = gscvlogistic_reduced.fit(X_reduced_logistic, y)
+print(gscvlogistic_reduced_fitted.best_score_, gscvlogistic_reduced_fitted.best_params_)
+```
+
+After trying many different models missing 1+ predictors, the model that performed better than the original model was the model excluding age as a predictor. This model had an optimal ROU-AUC score of 0.869 which exceeds the original model score. Another model that came close was the model excluding the predictor sex. The optimal ROU-AUC score is achieved with a C value of 1 and parameter type of l2 (lasso)
+
+Now, we can try a model that includes an interaction effect! 
+```{python}
+ct_int_logistic = ColumnTransformer(
+    [
+        ("interaction0", PolynomialFeatures(interaction_only=True), ["standardize__thalach", "dummify__cp_0"]), 
+        ("interaction1", PolynomialFeatures(interaction_only=True), ["standardize__thalach", "dummify__cp_1"]), 
+        ("interaction2", PolynomialFeatures(interaction_only=True), ["standardize__thalach", "dummify__cp_2"])
+    ], 
+  remainder = "passthrough"
+).set_output(transform = "pandas")
+```
+
+```{python}
+logistic_regression_int_pipeline=Pipeline(
+    [("preprocessing", ct), 
+    ("interaction", ct_int_logistic),
+    ("logistic regression", LogisticRegression())]
+)
+logistic_regression_int_pipeline.fit(X,y)
+```
+
+```{python}
+params = {
+    'logistic regression__penalty': ['l1', 'l2', 'elasticnet', None],
+    'logistic regression__C': [0.001, 0.01, 0.1, 1, 10, 100]
+}
+
+gscvlogistic_int = GridSearchCV(logistic_regression_int_pipeline, params, cv = 5, scoring='roc_auc')
+gscvlogistic_int_fitted = gscvlogistic_int.fit(X, y)
+print(gscvlogistic_int_fitted.best_score_, gscvlogistic_int_fitted.best_params_)
+```
+
+This interaction model resulted in an ROU-AUC value of 0.8586779840848807 with a C value of 1 and a penalty type of l2 (lasso). Our second model is better than this. 
+
+Now, we can fit this optimal model to all our data: 
+```{python}
+ct_reduced_logistic = ColumnTransformer(
+  [
+    ("dummify", OneHotEncoder(sparse_output = False, handle_unknown='ignore'), ["cp", "restecg", "sex"]),  
+    ("standardize", StandardScaler(), ["trtbps", "chol", "thalach"])
+  ],
+  remainder = "drop"
+).set_output(transform = "pandas")
+```
+
+```{python}
+logisitic_pipeline_best=Pipeline([
+    ("preprocessing", ct_reduced_logistic), 
+    ("logistic regression", LogisticRegression(penalty='l2', C=1))
+])
+
+logisitic_pipeline_best.fit(X,y)
+```
+
+```{python}
+scores_logistic_best = cross_val_score(logisitic_pipeline_best, X, y, cv=5, scoring='roc_auc')
+print(scores_logistic_best.mean())
+```
+
+The cross-validated ROC-AUC score is 0.869. 
+
+```{python}
+y_pred_cv_logistic = cross_val_predict(logisitic_pipeline_best, X, y, cv=5)
+cm3 = confusion_matrix(y, y_pred_cv_logistic)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm3) #used google/chat gpt for the ConfusionMatrixDisplay  
+disp.plot(cmap="Blues")
+print(cm3)
+```
+
+This confusion matrix showed that, with this best KNN model, in our cross validated predictions we got 116 true positives (we predicted at risk of heart attack and subject was truly at risk of hear attack), 95 true negatives (we predicted no risk of heart attack and subject was not at risk of heart attack). We, however, predicted that 32 subjects were at risk of a heart attach when they were not (false positives) and predicted that 30 subjects were not at risk of a heart attack when they were at risk of a heart attack (false negatives). 
+
+### Q3: Decision Tree
+Trying the full model: 
+```{python}
+tree_pipeline=Pipeline([
+    ("preprocessing", ct), 
+    ("decision tree", DecisionTreeClassifier())
+])
+
+tree_pipeline.fit(X,y)
+```
+
+Now, we tune the alpha value: 
+```{python}
+alphas = {'decision tree__ccp_alpha': (0.0001, 0.001, 0.01, 0.05, 0.075, 0.09, 0.1, 0.11, 1, 10, 50, 100)}
+gscvtree= GridSearchCV(tree_pipeline, alphas, cv = 5, scoring='roc_auc')
+gscvtree_fitted = gscvtree.fit(X, y)
+```
+
+```{python}
+print(gscvtree_fitted.best_score_, gscvtree_fitted.best_params_)
+```
+
+The best ROC-AUC score of this model is 0.7533 and is reached when alpha=0.05
+
+Now, we will try a model that includes an interaction effect between maximum heart rate achieved during exercise and chest pain type, since certain heart rate levels may cause different types of chest pain: 
+```{python}
+ct_int = ColumnTransformer(
+    [
+        ("interaction0", PolynomialFeatures(interaction_only=True), ["standardize__thalach", "dummify__cp_0"]), 
+        ("interaction1", PolynomialFeatures(interaction_only=True), ["standardize__thalach", "dummify__cp_1"]), 
+        ("interaction2", PolynomialFeatures(interaction_only=True), ["standardize__thalach", "dummify__cp_2"]), 
+    ], 
+  remainder = "passthrough"
+).set_output(transform = "pandas")
+```
+
+```{python}
+tree_int_pipeline=Pipeline([
+    ("preprocessing", ct), 
+    ("interaction", ct_int), 
+    ("decision tree", DecisionTreeClassifier())
+])
+
+tree_int_pipeline.fit(X,y)
+```
+
+```{python}
+alphas = {'decision tree__ccp_alpha': (0.0001, 0.001, 0.01, 0.05, 0.075, 0.09, 0.1, 0.11, 1, 10, 50, 100)}
+gscv2tree= GridSearchCV(tree_int_pipeline, alphas, cv = 5, scoring='roc_auc')
+gscv2tree_fitted = gscv2tree.fit(X, y)
+```
+
+```{python}
+print(gscv2tree_fitted.best_score_, gscv2tree_fitted.best_params_)
+```
+
+The best ROC-AUC score of this model is 0.7533 and is reached when alpha=0.05. This is the same as the previous model, and since the previous model is simpler we will proceed with that model. 
+
+Since adding an interaction effect did not help the ROC-AUC values for this model, we will now try reducing our model. 
+```{python}
+X_reduced_tree=ha.drop(columns=["output", "sex", "chol", "trtbps"])
+```
+
+Now, we tune the alpha value: 
+```{python}
+alphas = {'decision tree__ccp_alpha': (0.0001, 0.001, 0.01, 0.05, 0.075, 0.09, 0.1, 0.11, 1, 10, 50, 100)}
+gscv3tree= GridSearchCV(tree_pipeline, alphas, cv = 5, scoring='roc_auc')
+gscv3tree_fitted = gscvtree.fit(X_reduced_tree, y)
+```
+
+```{python}
+print(gscv3tree_fitted.best_score_, gscv3tree_fitted.best_params_)
+```
+
+Many different reductions were tried, and different variables were edited to see which performed better than the original model. Noteably a model with the excluded variables and age also performed better than the original model (but worse than the model with the 3 excluded predicted variables)
+
+This model excluding the predictors sex, cholestorol, and resting blood pressure had an ROC-AUC value of 0.7774 with an alpha value of 0.01. This is our best decision tree model so far. Thus, we fit it on the full data with the selected alpha value. 
+
+```{python}
+ct_reduced = ColumnTransformer(
+  [
+    ("dummify", OneHotEncoder(sparse_output = False, handle_unknown='ignore'), ["cp", "restecg"]),  
+    ("standardize", StandardScaler(), ["age", "thalach"])
+  ],
+  remainder = "drop"
+).set_output(transform = "pandas")
+```
+
+```{python}
+tree_pipeline_best=Pipeline([
+    ("preprocessing", ct_reduced), 
+    ("decision tree", DecisionTreeClassifier(ccp_alpha=0.01))
+])
+
+tree_pipeline_best.fit(X,y)
+```
+
+```{python}
+scores_tree_best = cross_val_score(tree_pipeline_best, X, y, cv=5, scoring='roc_auc')
+print(scores_tree_best.mean())
+```
+
+The cross-validated ROC-AUC score is 0.7774076038903625. 
+
+Confusion matrix for this model: 
+```{python}
+y_pred_cv_tree = cross_val_predict(tree_pipeline_best, X, y, cv=5)
+cm2 = confusion_matrix(y, y_pred_cv_tree)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm2) #used google/chat gpt for the ConfusionMatrixDisplay  
+disp.plot(cmap="Blues")
+print(cm2)
+```
+
+This confusion matrix showed that, with this best KNN model, in our cross validated predictions we got 114 true positives (we predicted at risk of heart attack and subject was truly at risk of hear attack), 88 true negatives (we predicted no risk of heart attack and subject was not at risk of heart attack). We, however, predicted that 39 subjects were at risk of a heart attach when they were not (false positives) and predicted that 32 subjects were not at risk of a heart attack when they were at risk of a heart attack (false negatives). 
+
+### Q4: Interpretation 
+

@@ -1,0 +1,144 @@
+---
+title: "Practice Activity 8.1"
+format: 
+    html:
+        embed-resources: true 
+---
+
+Palmer Penguins Modeling
+Import the Palmer Penguins dataset and print out the first few rows.
+
+Suppose we want to predict bill_depth_mm using the other variables in the dataset.
+
+Dummify all variables that require this.
+
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet 
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import make_column_selector, ColumnTransformer
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+from palmerpenguins import load_penguins
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+```
+
+```{python}
+penguins=load_penguins()
+penguins=penguins.dropna()
+```
+
+```{python}
+ct_dummify = ColumnTransformer(
+  [
+    ("dummify", 
+    OneHotEncoder(sparse_output = False, handle_unknown='ignore'), 
+    make_column_selector(dtype_include=object)), 
+    ("select", 
+    StandardScaler(), 
+    make_column_selector(dtype_include=np.number))
+  ],
+  remainder = "drop").set_output(transform = "pandas")
+```
+
+```{python}
+y=penguins["bill_depth_mm"]
+X=penguins.drop(columns="bill_depth_mm")
+```
+
+Let's use the other variables to predict bill_depth_mm. Prepare your data and fit the following models on the entire dataset:
+
+Your best multiple linear regression model from before:
+```{python}
+full_lr_model_pipeline=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("linear regression", LinearRegression())]
+)
+full_lr_model_pipeline.fit(X,y)
+```
+
+Two kNN models (for different values of K): 
+```{python}
+kNN10_pipeline=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("k nearest regression", KNeighborsRegressor(n_neighbors=10))]
+)
+kNN10_pipeline.fit(X,y)
+```
+
+```{python}
+kNN20_pipeline=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("k nearest regression", KNeighborsRegressor(n_neighbors=20))]
+)
+kNN20_pipeline.fit(X,y)
+```
+
+A decision tree model
+```{python}
+decisiontree_pipeline=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("decision tree", DecisionTreeRegressor(ccp_alpha=0.6))]
+)
+decisiontree_pipeline.fit(X,y)
+```
+
+
+```{python}
+scores_lr=cross_val_score(full_lr_model_pipeline, X, y, cv = 5, scoring = 'r2')
+print(scores_lr.mean())
+
+scores_knn10=cross_val_score(kNN10_pipeline, X, y, cv = 5, scoring = 'r2')
+print(scores_knn10.mean())
+
+scores_knn20=cross_val_score(kNN20_pipeline, X, y, cv = 5, scoring = 'r2')
+print(scores_knn20.mean())
+
+scores_decisiontree=cross_val_score(decisiontree_pipeline, X, y, cv = 5, scoring = 'r2')
+print(scores_decisiontree.mean())
+```
+
+Now, we tune to find optimal values of k and alpha for the knn and decision tree models, respectively: 
+```{python}
+kNN_pipeline=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("k nearest regression", KNeighborsRegressor())]
+)
+kNN_pipeline.fit(X,y)
+
+tree_pipeline=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("decision tree", DecisionTreeRegressor(ccp_alpha=0.6))]
+)
+tree_pipeline.fit(X,y)
+```
+
+```{python}
+k_value = {'k nearest regression__n_neighbors': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100)}
+alphas = {'decision tree__ccp_alpha': (0.0001, 0.001, 0.01, 0.1, 1, 10, 50, 100)}
+
+gscvknn = GridSearchCV(kNN_pipeline, k_value, cv = 5, scoring='r2')
+gscvtree= GridSearchCV(tree_pipeline, alphas, cv = 5, scoring='r2')
+
+gscvknn_fitted = gscvknn.fit(X, y)
+gscvtree_fitted = gscvtree.fit(X, y)
+```
+
+```{python}
+print(gscvknn_fitted.best_score_, gscvknn_fitted.best_params_)
+print(gscvtree_fitted.best_score_, gscvtree_fitted.best_params_)
+```
+
+Best k parameter: 10, resulting in a cross validated r2 value of 0.14885570659978092
+Best alpha parameter: resulting in a cross validated r2 value of 0.4840283355396526
+
+Which of your models was best?
+Decision tree with alpha=0.1
+

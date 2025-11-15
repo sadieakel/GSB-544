@@ -1,0 +1,207 @@
+---
+title: "Practice Activity 8.2: Categorical Dependent Variable"
+format: html
+---
+
+Pre-processing (same as practice activity 8.1): 
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score, confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import make_column_selector, ColumnTransformer
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+from palmerpenguins import load_penguins
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
+
+```
+
+```{python}
+penguins=load_penguins()
+penguins2=load_penguins()
+penguins=penguins.dropna()
+penguins2=penguins2.dropna()
+```
+
+```{python}
+from sklearn.model_selection import train_test_split
+```
+
+
+```{python}
+penguins2["is_gentoo"]=(penguins2["species"]=="Gentoo").astype(int)
+```
+
+```{python}
+ct_dummify = ColumnTransformer(
+  [
+    ("dummify", 
+    OneHotEncoder(sparse_output = False, handle_unknown='ignore'), ["sex", "island"]), 
+    ("select", 
+    StandardScaler(), 
+    make_column_selector(dtype_include=np.number))
+  ],
+  remainder = "drop").set_output(transform = "pandas")
+```
+
+```{python}
+y=penguins["species"]
+y2=penguins2["is_gentoo"]
+X=penguins.drop(columns="bill_depth_mm")
+X2=penguins2.drop(columns=["is_gentoo", "species"])
+```
+
+```{python}
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, stratify=y)
+X2_train, X2_test, y2_train, y2_test = train_test_split(X2, y2, test_size=0.25, stratify=y2)
+```
+
+## Models on Entire Dataset
+
+### Logistic Regression 
+```{python}
+logistic_regression_pipeline=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", LogisticRegression())]
+)
+logistic_regression_pipeline.fit(X2,y2)
+```
+
+
+### kNN 
+```{python}
+kNN_pipeline_1=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", KNeighborsClassifier(n_neighbors=10))]
+)
+kNN_pipeline_1.fit(X,y)
+```
+
+```{python}
+kNN_pipeline_2=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", KNeighborsClassifier(n_neighbors=5))]
+)
+kNN_pipeline_2.fit(X,y)
+```
+
+### Decision trees
+```{python}
+tree_pipeline_1=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", DecisionTreeClassifier(ccp_alpha=0.2))]
+)
+tree_pipeline_1.fit(X,y)
+```
+
+```{python}
+tree_pipeline_2=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", DecisionTreeClassifier(ccp_alpha=0.5))]
+)
+tree_pipeline_2.fit(X,y)
+```
+
+## Models on the Training Data Only
+
+### Logistic Regression 
+```{python}
+logistic_regression_pipeline=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", LogisticRegression())]
+)
+logistic_regression_pipeline.fit(X2_train,y2_train)
+```
+
+```{python}
+y2_pred = logistic_regression_pipeline.predict(X2_test)
+print("LogReg accuracy:", accuracy_score(y2_test, y2_pred))
+print("Confusion matrix:\n", confusion_matrix(y2_test, y2_pred))
+```
+
+Overall accuracy is 1 
+
+
+
+### kNN 
+```{python}
+kNN_pipeline_1=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", KNeighborsClassifier(n_neighbors=10))]
+)
+kNN_pipeline_1.fit(X_train,y_train)
+```
+
+```{python}
+y_pred = kNN_pipeline_1.predict(X_test)
+overall_accuracy = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+print(overall_accuracy)
+```
+
+
+```{python}
+kNN_pipeline_2=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", KNeighborsClassifier(n_neighbors=5))]
+)
+kNN_pipeline_2.fit(X_train,y_train)
+```
+
+```{python}
+y_pred = kNN_pipeline_2.predict(X_test)
+y_pred_proba = kNN_pipeline_2.predict_proba(X_test)
+overall_accuracy = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+print(overall_accuracy)
+print(cm)
+```
+
+Accuracy is 0.9880952380952381. 
+
+## Decision trees
+```{python}
+tree_pipeline_1=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", DecisionTreeClassifier(ccp_alpha=0.2))]
+)
+tree_pipeline_1.fit(X_train,y_train)
+```
+
+```{python}
+y_pred = tree_pipeline_1.predict(X_test)
+overall_accuracy = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+print(overall_accuracy)
+print(cm)
+```
+
+Accuracy is 0.9285714285714286. 
+
+```{python}
+tree_pipeline_2=Pipeline(
+    [("preprocessing", ct_dummify), 
+    ("logistic regression", DecisionTreeClassifier(ccp_alpha=0.5))]
+)
+tree_pipeline_2.fit(X_train,y_train)
+```
+
+```{python}
+y_pred = tree_pipeline_2.predict(X_test)
+y_pred_proba = tree_pipeline_2.predict_proba(X_test)
+overall_accuracy = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+print(overall_accuracy)
+print(cm)
+```
+
+Overall accuracy is 0.44047619047619047
+
