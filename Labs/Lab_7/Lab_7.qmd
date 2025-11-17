@@ -9,13 +9,14 @@ execute:
 
 ## Importing the Dataset and Loading Necessary Libraries
 ```{python}
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, LogisticRegression
 from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict
-from sklearn.metrics import r2_score, confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score, ConfusionMatrixDisplay
+from sklearn.metrics import r2_score, confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score, ConfusionMatrixDisplay, RocCurveDisplay, recall_score, precision_score, make_scorer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import make_column_selector, ColumnTransformer
 from sklearn.model_selection import GridSearchCV
@@ -23,7 +24,6 @@ import matplotlib.pyplot as plt
 from palmerpenguins import load_penguins
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
-
 ```
 
 ```{python}
@@ -42,7 +42,6 @@ Note that all variables (even categorical variables) are considered integers in 
 ha["sex"]=ha["sex"].astype("str")
 ha["cp"]=ha["cp"].astype("str")
 ha["restecg"]=ha["restecg"].astype("str")
-ha["output"]=ha["output"].astype("str")
 ```
 
 ```{python}
@@ -299,7 +298,7 @@ disp.plot(cmap="Blues")
 print(cm3)
 ```
 
-This confusion matrix showed that, with this best KNN model, in our cross validated predictions we got 116 true positives (we predicted at risk of heart attack and subject was truly at risk of hear attack), 95 true negatives (we predicted no risk of heart attack and subject was not at risk of heart attack). We, however, predicted that 32 subjects were at risk of a heart attach when they were not (false positives) and predicted that 30 subjects were not at risk of a heart attack when they were at risk of a heart attack (false negatives). 
+This confusion matrix showed that, with this best logistic regression model, in our cross validated predictions we got 116 true positives (we predicted at risk of heart attack and subject was truly at risk of hear attack), 95 true negatives (we predicted no risk of heart attack and subject was not at risk of heart attack). We, however, predicted that 32 subjects were at risk of a heart attach when they were not (false positives) and predicted that 30 subjects were not at risk of a heart attack when they were at risk of a heart attack (false negatives). 
 
 ### Q3: Decision Tree
 Trying the full model: 
@@ -418,3 +417,69 @@ This confusion matrix showed that, with this best KNN model, in our cross valida
 
 ### Q4: Interpretation 
 
+In some of these models, having more predictors resulted in a higher ROC-AUC score, while excluding certain predictors in other models proved beneficial. Overall, all models found that predictors chest pain type, maximum heart rate achieved during exercise, resting electrocardiographic results, and age to be the most important predictors. 
+
+### Q5: ROC Curve
+```{python}
+fig, ax = plt.subplots(figsize=(8, 6))
+roc_display1 = RocCurveDisplay.from_estimator(knn_pipeline_best, X, y, ax=ax, name="KNN")
+roc_display2 = RocCurveDisplay.from_estimator(logisitic_pipeline_best, X, y, ax=ax, name="Logistic")
+roc_display3 = RocCurveDisplay.from_estimator(tree_pipeline_best, X, y, ax=ax, name="Decision Tree")
+ax.plot([0, 1], [0, 1], color='red', linestyle='--', label='Random classifier')
+plt.title('ROC Curve')
+plt.show()
+```
+
+## Part 2: Metrics
+
+1. Recall Score: 
+```{python}
+recall_knn=cross_val_score(knn_pipeline_best, X, y, cv=5, scoring='recall')
+print("knn recall crossvalidated score:", recall_knn.mean())
+recall_logistic=cross_val_score(logisitic_pipeline_best, X, y, cv=5, scoring='recall')
+print("logistic recall crossvalidated score:", recall_logistic.mean())
+recall_tree=cross_val_score(tree_pipeline_best, X, y, cv=5, scoring='recall')
+print("tree recall crossvalidated score:", recall_tree.mean())
+```
+
+2. Precision Score: 
+```{python}
+precision_knn=cross_val_score(knn_pipeline_best, X, y, cv=5, scoring='precision')
+print("knn precision crossvalidated score:", precision_knn.mean())
+precision_logistic=cross_val_score(logisitic_pipeline_best, X, y, cv=5, scoring='precision')
+print("logistic precision crossvalidated score:", precision_logistic.mean())
+precision_tree=cross_val_score(tree_pipeline_best, X, y, cv=5, scoring='precision')
+print("tree recall crossvalidated score:", precision_tree.mean())
+```
+
+3. True negative rate: 
+```{python}
+def trueneg_score(y_true, y_pred): #used chat gpt for this function and function make_scorer
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    return tn / (tn + fp)
+trueneg_scorer = make_scorer(trueneg_score)
+
+trueneg_knn = cross_val_score(knn_pipeline_best, X, y, cv=5, scoring=trueneg_scorer)
+print("knn true negative crossvalidated score:", trueneg_knn.mean())
+trueneg_logistic = cross_val_score(logisitic_pipeline_best, X, y, cv=5, scoring=trueneg_scorer)
+print("logistic true negative crossvalidated score:", trueneg_logistic.mean())
+trueneg_tree = cross_val_score(tree_pipeline_best, X, y, cv=5, scoring=trueneg_scorer)
+print("tree true negative crossvalidated score:", trueneg_tree.mean())
+```
+
+
+## Part 3: Discussion
+
+### 1: The hospital faces severe lawsuits if they deem a patient to be low risk, and that patient later experiences a heart attack.
+In this situation we want to minimize false negatives the most and make sure that of all the observations that are class A, we have a high score of predicting them as class A. So, we will use the recall scores for model selection. Logistic regression has the highest recall score out of all models with a predicted recall score of 0.795, so we proceed with this model.  
+
+### 2: The hospital is overfull, and wants to only use bed space for patients most in need of monitoring due to heart attack risk.
+In this situation we want to minimize false positives the most and make sure we have a high percentage of all observations classified as class A are actually class A. So, we will use our precision score as our metric for selection. The logistic regression model has the highest precision score with a precision score of 0.791, so we proceed with this model. 
+
+### 3: The hospital is studying root causes of heart attacks, and would like to understand which biological measures are associated with heart attack risk.
+For this scenario, we would want to use our logistic regression model due to how this model allows us to view the specific parameters that have an effect on classification. To evaluate this model, we can use the ROC-AUC score as it gives a broad picture of how the model performs in predicting heart risk. For this model and metric we predict a value of 0.88. 
+
+### 4: The hospital is training a new batch of doctors, and they would like to compare the diagnoses of these doctors to the predictions given by the algorithm to measure the ability of new doctors to diagnose patients.
+For this scenario, we would use our decision tree model. This is due to how it mirrors certain criteria/questions that doctors can use to diagnose patients and put them in categories based on heart risk. To evaluate this model, we can use the ROC-AUC score as it gives a broad picture of how the model performs in predicting heart risk. For this model and metric we predict a value of 0.83. 
+
+## 4: Validation
