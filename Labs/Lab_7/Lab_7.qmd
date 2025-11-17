@@ -16,7 +16,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
 from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, LogisticRegression
 from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict
-from sklearn.metrics import r2_score, confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score, ConfusionMatrixDisplay, RocCurveDisplay, recall_score, precision_score, make_scorer
+from sklearn.metrics import r2_score, confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score, ConfusionMatrixDisplay, RocCurveDisplay, recall_score, precision_score, make_scorer, cohen_kappa_score
 from sklearn.pipeline import Pipeline
 from sklearn.compose import make_column_selector, ColumnTransformer
 from sklearn.model_selection import GridSearchCV
@@ -483,3 +483,66 @@ For this scenario, we would want to use our logistic regression model due to how
 For this scenario, we would use our decision tree model. This is due to how it mirrors certain criteria/questions that doctors can use to diagnose patients and put them in categories based on heart risk. To evaluate this model, we can use the ROC-AUC score as it gives a broad picture of how the model performs in predicting heart risk. For this model and metric we predict a value of 0.83. 
 
 ## 4: Validation
+```{python}
+ha_validation = pd.read_csv("https://www.dropbox.com/s/jkwqdiyx6o6oad0/heart_attack_validation.csv?dl=1")
+```
+
+```{python}
+ha_validation["sex"]=ha_validation["sex"].astype("str")
+ha_validation["cp"]=ha_validation["cp"].astype("str")
+ha_validation["restecg"]=ha_validation["restecg"].astype("str")
+```
+
+```{python}
+y_test=ha_validation["output"]
+X_test=ha_validation.drop(columns="output")
+```
+
+```{python}
+knn_preds=knn_pipeline_best.predict(X_test)
+logistic_preds=logisitic_pipeline_best.predict(X_test)
+tree_preds=tree_pipeline_best.predict(X_test)
+```
+
+ROC_AUC scores: 
+```{python}
+print(roc_auc_score(y_test,knn_preds),
+roc_auc_score(y_test,logistic_preds),
+roc_auc_score(y_test,tree_preds))
+```
+
+The ROC AUC scores are slightly lower with the validation than originally predicted based on the cross validated metrics. However, most of them were very close with the decision tree performing the best (which is not what the cross validated scores suggest). The logistic regression performed the worst when it was predicted to do much better from our cross validated scores, dropping 0.15. 
+
+Precision scores: 
+```{python}
+print(precision_score(y_test,knn_preds),
+precision_score(y_test,logistic_preds),
+precision_score(y_test,tree_preds))
+```
+
+The KNN score on the validation data is suspiciously high (value of 1), which suggests that this model, once introduced to the validation data, severly underdiagnoses heart attack risk. The other models also have higher precision scores but it is less of a notable difference. 
+
+Recall scores: 
+```{python}
+print(recall_score(y_test,knn_preds),
+recall_score(y_test,logistic_preds),
+recall_score(y_test,tree_preds))
+```
+
+As expected, the KNN had a lower recall score than in the cross validation. However, logistic regression performed comporably, and the decision tree performed better than in the cross validation. 
+
+Overall, our measures of model success turn out to be approximately correct for the validation data. However, the KNN model performed slightly worse than expected and the decision tree model performed better than expected (decision tree had the highest overall scores on the validation data)
+
+## 5: Cohen’s Kappa
+Cohen's kappa is a metric that compares the accuracy of the model to the accuracy achieved by random chance. A kappa value of zero is equivalent to a random prediction. 
+
+```{python}
+kappa_knn = cohen_kappa_score(y_test, knn_preds)
+kappa_logistic = cohen_kappa_score(y_test, logistic_preds)
+kappa_tree = cohen_kappa_score(y_test, tree_preds)
+print(kappa_knn, kappa_logistic, kappa_tree)
+```
+
+This metric of model success is best when we are using inbalanced datasets, such as if this data includes many more instances of non heart risk vs heart risk. Also, since this metric accounts for random chance it gives a easy to interpret number that gives a good representation of model performance. 
+
+The kappa values are in line with the other metrics used on the validation data, and in this metric the decision tree model performs the best. 
