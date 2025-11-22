@@ -1,0 +1,129 @@
+---
+title: "Practice Activity 9.2"
+format: 
+    html: 
+        embed-resources: true
+---
+
+```{python}
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, LogisticRegression
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict
+from sklearn.metrics import r2_score, confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score, ConfusionMatrixDisplay, RocCurveDisplay, recall_score, precision_score, make_scorer, cohen_kappa_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import make_column_selector, ColumnTransformer
+from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+from palmerpenguins import load_penguins
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier, plot_tree
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+```
+
+```{python}
+ha = pd.read_csv("https://www.dropbox.com/scl/fi/0vrpdnq5asmeulc4gd50y/ha_1.csv?rlkey=ciisalceotl77ffqhqe3kujzv&dl=1")
+```
+```{python}
+ha=ha.dropna()
+ha["diagnosis"] = ha["diagnosis"].astype("category").cat.codes
+ha=ha.drop(columns="Name")
+```
+```{python}
+ha.info()
+```
+
+## Q1
+```{python}
+X = ha.drop(columns='cp')
+y = ha['cp']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+knn_model = KNeighborsClassifier(n_neighbors=4).fit(X_train, y_train)
+tree_model = DecisionTreeClassifier(max_depth=3).fit(X_train, y_train)
+lda_model = LinearDiscriminantAnalysis().fit(X_train, y_train)
+```
+
+```{python}
+plot_tree(tree, feature_names=X.columns, filled=True)
+```
+
+## Q2
+```{python}
+ha["is_cp0"] = (ha["cp"] == 0).astype(int)
+ha["is_cp1"] = (ha["cp"] == 1).astype(int)
+ha["is_cp2"] = (ha["cp"] == 2).astype(int)
+ha["is_cp3"] = (ha["cp"] == 3).astype(int)
+
+X = ha.drop(columns=['cp','is_cp0','is_cp1','is_cp2','is_cp3'])
+```
+
+```{python}
+X_train, X_test, y_train, y_test = train_test_split(X, ha['is_cp0'], test_size=0.2, random_state=10, stratify=target)
+mod_0 = LogisticRegression().fit(X_train, y_train)
+f1_0 = f1_score(y_test, mod_0.predict(X_test))
+```
+
+```{python}
+X_train2, X_test2, y_train2, y_test2 = train_test_split(X, ha['is_cp1'], test_size=0.2, random_state=10, stratify=target)
+mod_1 = LogisticRegression().fit(X_train2, y_train2)
+f1_1 = f1_score(y_test2, mod_1.predict(X_test2))
+```
+
+```{python}
+X_train3, X_test3, y_train3, y_test3 = train_test_split(X, ha['is_cp2'], test_size=0.2, random_state=10, stratify=target)
+mod_2 = LogisticRegression().fit(X_train3, y_train3)
+f1_2 = f1_score(y_test3, mod_2.predict(X_test3))
+```
+
+```{python}
+X_train4, X_test4, y_train4, y_test4 = train_test_split(X, ha['is_cp3'], test_size=0.2, random_state=10, stratify=target)
+mod_3 = LogisticRegression().fit(X_train4, y_train4)
+f1_3 = f1_score(y_test4, mod_3.predict(X_test4))
+```
+
+```{python}
+f1_0, f1_1, f1_2, f1_3
+```
+
+## Q3
+```{python}
+ovo_comp = ha[(ha['cp']==0) | (ha['cp']==1)]
+ovo_X = ovo_comp.drop(columns='cp')
+ovo_y = (ovo_comp['cp']==0).astype(int)
+
+X_train, X_test, y_train, y_test = train_test_split(ovo_X, ovo_y, test_size=0.2, random_state=10, stratify=target)
+ovo_model_1 = LogisticRegression(max_iter=200).fit(X_train, y_train)
+auc_score1 = roc_auc_score(y_test, ovo_model_1.predict_proba(X_test))
+```
+
+```{python}
+ovo_comp2 = ha[(ha['cp']==0) | (ha['cp']==2)]
+ovo_X2 = ovo_comp2.drop(columns='cp')
+ovo_y2 = (ovo_comp2['cp']==0).astype(int)
+X_train, X_test, y_train, y_test = train_test_split(ovo_X2, ovo_y2, test_size=0.2, random_state=10, stratify=target)
+ovo_model_2 = LogisticRegression(max_iter=200).fit(X_train, y_train)
+auc_score2 = roc_auc_score(ovo_model_2, mod_02.predict_proba(X_test))
+```
+
+```{python}
+ovo_comp3 = ha[(ha['cp']==0) | (ha['cp']==3)]
+ovo_X3 = ovo_comp3.drop(columns='cp')
+ovo_y3 = (ovo_comp3['cp']==0).astype(int)
+X_train, X_test, y_train, y_test = train_test_split(ovo_X3, ovo_y3, test_size=0.2, random_state=10, stratify=target)
+ovo_model_3 = LogisticRegression(max_iter=200).fit(X_train, y_train)
+auc_score2 = roc_auc_score(y_test, ovo_model_3.predict_proba(X_test))
+```
+
+```{python}
+auc_score1, auc_score2, auc_score3
+```
+
+
+
