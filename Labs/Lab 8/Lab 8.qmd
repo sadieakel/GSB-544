@@ -1,0 +1,513 @@
+---
+title: "Lab 8"
+format: 
+    html: 
+        embed-resources: true
+execute: 
+    warning: false
+---
+
+## Loading Necessary Packages and Import of Data
+```{python}
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet, LogisticRegression
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split, cross_val_score, cross_val_predict
+from sklearn.metrics import r2_score, confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score, ConfusionMatrixDisplay, RocCurveDisplay, recall_score, precision_score, make_scorer, cohen_kappa_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import make_column_selector, ColumnTransformer
+from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+from palmerpenguins import load_penguins
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier, plot_tree
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
+```
+
+```{python}
+cannabis=pd.read_csv("~/Desktop/GSB 544/Labs/Lab 8/cannabis_full.csv", sep=',')
+cannabis.head()
+```
+
+```{python}
+cannabis=cannabis.dropna()
+```
+
+## Part One: Binary Classification 
+```{python}
+is_indica_or_sativa=(cannabis["Type"]=="indica")|(cannabis["Type"]=="sativa")
+cannabis_type=cannabis[is_indica_or_sativa]
+```
+
+```{python}
+X=cannabis_type.drop(columns=["Effects", "Flavor", "Type", "Strain"])
+y=cannabis_type["Type"]
+```
+
+```{python}
+ct_standardize=ColumnTransformer(
+    [("standardize", StandardScaler(), make_column_selector(dtype_include=np.number))],
+    remainder="passthrough"
+).set_output(transform="pandas")
+```
+
+### LDA 
+First, we fit the LDA model on the data: 
+```{python}
+lda_pipeline=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("LDA", LinearDiscriminantAnalysis())]
+).set_output(transform="pandas")
+lda_pipeline.fit(X,y)
+```
+
+Now, we can tune the model with the chosen metric: 
+I chose the accuracy metric, as it is a metric that does not give more "power" to a certain type of prediction/category. 
+
+```{python}
+lda_value = {'LDA__solver': ("svd", "lsqr", "eigen")}
+
+gscvlda = GridSearchCV(lda_pipeline, lda_value, cv = 5, scoring='accuracy')
+gscvlda_fitted = gscvlda.fit(X, y)
+print(gscvlda_fitted.best_score_, gscvlda_fitted.best_params_)
+```
+
+Best model is the default solver SVD. This had a cross validated accuracy score of 0.85954. 
+```{python}
+scores_lda = cross_val_score(lda_pipeline, X, y, cv=5, scoring='accuracy')
+print(scores_lda.mean())
+```
+
+The confusion metric is below: 
+```{python}
+y_pred_lda = cross_val_predict(lda_pipeline, X, y, cv=5) 
+cm = confusion_matrix(y, y_pred_lda)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm) 
+disp.plot(cmap="Blues")
+print(cm)
+```
+
+
+### QDA
+```{python}
+qda_pipeline=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("QDA", QuadraticDiscriminantAnalysis())]
+)
+qda_pipeline.fit(X,y)
+```
+
+```{python}
+qda_value = {'QDA__reg_param': (0.001, 0.01, 0.1, 0.5, 0.75, 0.9, 0.99)}
+
+gscvqda = GridSearchCV(qda_pipeline, qda_value, cv = 5, scoring='accuracy')
+gscvqda_fitted = gscvqda.fit(X, y)
+print(gscvqda_fitted.best_score_, gscvqda_fitted.best_params_)
+```
+
+I chose the accuracy metric, as it is a metric that does not give more "power" to a certain type of prediction/category. 
+
+We get the highest accuracy prediction tuned to value reg_param = 0.99. Here, we get a cross validated accuacy score of 0.8577. 
+
+Now, we will fit this best model on the full dataset. 
+
+```{python}
+qda_pipeline_best=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("QDA", QuadraticDiscriminantAnalysis(reg_param=0.99))]
+)
+qda_pipeline_best.fit(X,y)
+```
+
+```{python}
+y_pred_qda = cross_val_predict(qda_pipeline_best, X, y, cv=5) 
+cm = confusion_matrix(y, y_pred_qda)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm) 
+disp.plot(cmap="Blues")
+print(cm)
+```
+
+
+### SVC
+```{python}
+svc_pipeline=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("SVC", SVC(kernel="linear"))]
+)
+svc_pipeline.fit(X,y)
+```
+
+```{python}
+c_values = {'SVC__C': [0.001, 0.01, 0.1, 1, 10, 100]}
+
+gscv_svc = GridSearchCV(svc_pipeline, c_values, cv = 5, scoring='accuracy')
+gscv_svc_fitted = gscv_svc.fit(X, y)
+print(gscv_svc_fitted.best_score_, gscv_svc_fitted.best_params_)
+```
+
+Optimal SVC C value is 0.1, for this hyperparameter we recieve a cross validated accuracy score of 0.8586. 
+
+```{python}
+svc_pipeline_best=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("SVC", SVC(C=0.1, kernel='linear'))]
+)
+svc_pipeline_best.fit(X,y)
+```
+
+```{python}
+y_pred_svc = cross_val_predict(svc_pipeline_best, X, y, cv=5) 
+cm = confusion_matrix(y, y_pred_svc)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm) 
+disp.plot(cmap="Blues")
+print(cm)
+```
+
+This confusion matrix shows that we are predicting  all observations as being of the indica type. This has led to a very skewed confusion matrix, and an overall weak model for prediction. 
+
+### SVM
+```{python}
+svm_pipeline=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("SVM", SVC(kernel='poly'))]
+)
+svm_pipeline.fit(X,y)
+```
+
+```{python}
+c_value = {'SVM__C': [0.001, 0.01, 0.1, 1, 10, 100]}
+
+gscv_svm = GridSearchCV(svm_pipeline, c_value, cv = 5, scoring='accuracy')
+gscv_svm_fitted = gscv_svm.fit(X, y)
+print(gscv_svm_fitted.best_score_, gscv_svm_fitted.best_params_)
+```
+
+I chose the accuracy metric, as it is a metric that does not give more "power" to a certain type of prediction/category. 
+
+We get the highest accuracy prediction tuned to value c value of 10. Here, we get a cross validated accuacy score of 0.84368. 
+
+Now, we will fit this best model on the full dataset. 
+
+```{python}
+svm_pipeline_best=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("SVM", SVC(kernel='poly', C=10))]
+)
+svm_pipeline_best.fit(X,y)
+```
+
+```{python}
+y_pred_svm = cross_val_predict(svm_pipeline_best, X, y, cv=5) 
+cm = confusion_matrix(y, y_pred_svm)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm) 
+disp.plot(cmap="Blues")
+print(cm)
+```
+
+This confusion matrix shows that we are predicting almost all observations as being of the indica type, as we only predicted only 1 observation as being of the sativa type. This has led to a very skewed confusion matrix, and an overall weak model for prediction. 
+
+
+## Part 2: Natural Multiclass
+
+```{python}
+X=cannabis.drop(columns=["Effects", "Flavor", "Type", "Strain"])
+y=cannabis["Type"]
+```
+
+### Decision Tree
+```{python}
+tree_pipeline=Pipeline([
+    ("preprocessing", ct_standardize), 
+    ("decision tree", DecisionTreeClassifier())
+])
+
+tree_pipeline.fit(X,y)
+```
+
+```{python}
+alphas = {'decision tree__ccp_alpha': (0.0001, 0.001, 0.01, 0.05, 0.075, 0.09, 0.1, 0.11, 1, 10, 50, 100)}
+gscvtree= GridSearchCV(tree_pipeline, alphas, cv = 5, scoring='accuracy')
+gscvtree_fitted = gscvtree.fit(X, y)
+```
+
+```{python}
+print(gscvtree_fitted.best_score_, gscvtree_fitted.best_params_)
+```
+
+We get the highest accuracy prediction tuned to value alpha = 0.01. Here, we get a cross validated accuacy score of 0.613875.  
+
+Now, we will fit this best model on the full dataset. 
+
+```{python}
+tree_pipeline_best=Pipeline([
+    ("preprocessing", ct_standardize), 
+    ("decision tree", DecisionTreeClassifier(ccp_alpha=0.01))
+])
+
+tree_pipeline_best.fit(X,y)
+```
+
+```{python}
+tree = tree_pipeline_best.named_steps["decision tree"]
+
+# Plot it
+plt.figure(figsize=(20, 10))
+plot_tree(tree,
+          feature_names=X.columns,
+          class_names=[str(c) for c in tree.classes_],
+          filled=True,
+          rounded=True)
+plt.show()
+```
+
+The decision tree results are interesting, as they do not predict any of the strains to be sativa. The decision tree essentially makes one choice between identifying strains as either hybrid or indica and it is the first "choice" the decision tree makes. Then, the tree can additionally split the hybrid strains into two distinct groups. This suggests that indica and hybrid strains are more prominent in the data we have collected, and have more defining characteristics than sativa strains. 
+
+### Repeating analysis from part 1 for LDA, QDA, and KNN models
+
+#### 1: LDA
+```{python}
+lda_pipeline.fit(X,y)
+```
+
+```{python}
+lda_value = {'LDA__solver': ("svd", "lsqr", "eigen")}
+
+gscvlda = GridSearchCV(lda_pipeline, lda_value, cv = 5, scoring='accuracy')
+gscvlda_fitted = gscvlda.fit(X, y)
+print(gscvlda_fitted.best_score_, gscvlda_fitted.best_params_)
+```
+
+
+Using accuracy as a metric as above, we recieve a cross validated score of 0.62802 using the LDA solver SVD. This is the default, so we can proceed with our confusion matrix: 
+
+```{python}
+y_pred_lda = cross_val_predict(lda_pipeline, X, y, cv=5) 
+cm = confusion_matrix(y, y_pred_lda)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm) 
+disp.plot(cmap="Blues")
+print(cm)
+```
+
+#### 2: QDA 
+
+```{python}
+qda_value = {'QDA__reg_param': (0.001, 0.01, 0.1, 0.5, 0.75, 0.9, 0.99)}
+
+gscvqda = GridSearchCV(qda_pipeline, qda_value, cv = 5, scoring='accuracy')
+gscvqda_fitted = gscvqda.fit(X, y)
+print(gscvqda_fitted.best_score_, gscvqda_fitted.best_params_)
+```
+
+Using accuracy as a metric as above, we recieve a cross validated score of 0.6166 using the hyperparameter reg_param of 0.99. Now, we can fit this best model on our data: 
+
+```{python}
+qda_pipeline_best=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("QDA", QuadraticDiscriminantAnalysis(reg_param=0.99))]
+)
+qda_pipeline_best.fit(X,y)
+```
+
+```{python}
+y_pred_qda = cross_val_predict(qda_pipeline_best, X, y, cv=5) 
+cm = confusion_matrix(y, y_pred_qda)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm) 
+disp.plot(cmap="Blues")
+print(cm)
+```
+
+#### 3: KNN 
+```{python}
+knn_pipeline=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("KNN", KNeighborsClassifier())]
+)
+knn_pipeline.fit(X,y)
+```
+
+```{python}
+knn_value = {'KNN__n_neighbors': (0.001, 0.01, 0.1, 1, 10)}
+
+gscvknn = GridSearchCV(knn_pipeline, knn_value, cv = 5, scoring='accuracy')
+gscvknn_fitted = gscvknn.fit(X, y)
+print(gscvknn_fitted.best_score_, gscvknn_fitted.best_params_)
+```
+
+Using accuracy the chosen metric, the optimal n_neighbors value for the KNN model is 10. With this value we get a cross validated accuracy score of 0.5454. We will now fit this best model on the entire dataset: 
+
+```{python}
+knn_pipeline_best=Pipeline(
+    [("preprocessing", ct_standardize), 
+    ("KNN", KNeighborsClassifier(n_neighbors=10))]
+)
+knn_pipeline_best.fit(X,y)
+```
+
+```{python}
+y_pred_knn = cross_val_predict(knn_pipeline_best, X, y, cv=5) 
+cm = confusion_matrix(y, y_pred_knn)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm) 
+disp.plot(cmap="Blues")
+print(cm)
+```
+
+#### 4: Metric Comparison 
+
+For confusion matrix interpretation: 
+```{python}
+print(cannabis['Type'].astype('category').cat.categories)
+```
+
+0- hybrid 
+1- indica
+2- sativa 
+
+```{python}
+print(cannabis_type['Type'].astype('category').cat.categories)
+```
+
+0- indica 
+1- sativa
+
+Overall, our metrics were better in part 1. However, this makes sense in context due to how adding a third category to the classification options would make prediction harder generally. Also, in this dataset specifically, we can see that there are many hybrid observations and thus the models created to additionally predict the hybrid strains are swayed to ensure that those are predicted correctly (meaning more sativa/indica predictions may have gotten confused). 
+
+According to the confusion matrices, the hybrid category was predicted pretty frequently, so sativa and indica strains were commonly mistaken for hybrid strains. We can see this in the left column in the confusion matrices. This is also present in the opposite direction, where hybrid strains were estimated to be either sativa or indica. Between these two categories, hybrid strains were more commonly mistaken for indica strains. 
+
+These confusion matrices make sense in context due to the nature of our data, and how there are more hybrid observations than the other two categories. Additionally, hybrid strains are a blend of hybrid and sativa types, so it would make sense that those types would be harder to distinguish/mistaken for either one. 
+
+## Part 3: Multiclass From Binary 
+
+### Q1: 
+Data preparation: 
+```{python}
+cannabis_ovr=cannabis
+cannabis_ovr['is_indica']=((cannabis['Type']=="indica"))
+cannabis_ovr['is_sativa']=((cannabis['Type']=="sativa"))
+cannabis_ovr['is_hybrid']=((cannabis['Type']=="hybrid"))
+```
+
+```{python}
+y_sativa=cannabis_ovr['is_sativa']
+y_indica=cannabis_ovr['is_indica']
+y_hybrid=cannabis_ovr['is_hybrid']
+X_ovr=cannabis_ovr.drop(columns=['is_sativa','is_hybrid', 'is_indica', 'Type', 'Strain', 'Effects', 'Flavor'])
+```
+
+#### SVC Models: 
+```{python}
+svc_pipeline.fit(X_ovr, y_sativa)
+svc_pipeline.fit(X_ovr, y_indica)
+svc_pipeline.fit(X_ovr, y_hybrid)
+```
+
+```{python}
+scores_svc_sativa = cross_val_score(svc_pipeline, X_ovr, y_sativa, cv=5, scoring='accuracy')
+print(scores_svc_sativa.mean())
+
+scores_svc_indica = cross_val_score(svc_pipeline, X_ovr, y_indica, cv=5, scoring='accuracy')
+print(scores_svc_indica.mean())
+
+scores_svc_hybrid = cross_val_score(svc_pipeline, X_ovr, y_hybrid, cv=5, scoring='accuracy')
+print(scores_svc_hybrid.mean())
+```
+
+#### Logistic Regression Models: 
+```{python}
+logistic_pipeline=Pipeline([
+    ("preprocessing", ct_standardize), 
+    ("logistic regression", LogisticRegression())
+])
+
+logistic_pipeline.fit(X_ovr, y_hybrid)
+logistic_pipeline.fit(X_ovr, y_indica)
+logistic_pipeline.fit(X_ovr, y_sativa)
+```
+
+```{python}
+scores_logistic_sativa = cross_val_score(logistic_pipeline, X_ovr, y_sativa, cv=5, scoring='accuracy')
+print(scores_logistic_sativa.mean())
+
+scores_logistic_indica = cross_val_score(logistic_pipeline, X_ovr, y_indica, cv=5, scoring='accuracy')
+print(scores_logistic_indica.mean())
+
+scores_logistic_hybrid = cross_val_score(logistic_pipeline, X_ovr, y_hybrid, cv=5, scoring='accuracy')
+print(scores_logistic_hybrid.mean())
+```
+
+```{python}
+cannabis=cannabis.drop(columns=['is_sativa','is_hybrid', 'is_indica'])
+```
+
+### Q2: 
+The best model out of the six was the SVC model for the sativa/not sativa. The worst model out of the six was the SVC hybrid/not hybrid model. However, generally the SVC and logistic model performed very similarly on each of the three categories. These results make sense because in previous multiclass comparisons, hybrid strains were hard to distinguish from the other categories and sativa strains were relatively easy to distinguish from other categories. 
+
+### Q3: 
+Data preparation: 
+```{python}
+is_indica_or_sativa=(cannabis["Type"]=="indica")|(cannabis["Type"]=="sativa")
+is_indica_or_hybrid=(cannabis["Type"]=="indica")|(cannabis["Type"]=="hybrid")
+is_hybrid_or_sativa=(cannabis["Type"]=="hybrid")|(cannabis["Type"]=="sativa")
+
+cannabis_1=cannabis[is_indica_or_sativa]
+cannabis_2=cannabis[is_indica_or_hybrid]
+cannabis_3=cannabis[is_hybrid_or_sativa]
+```
+
+```{python}
+X_1=cannabis_1.drop(columns=['Type', 'Strain', 'Effects', 'Flavor'])
+y_1=cannabis_1['Type']
+
+X_2=cannabis_2.drop(columns=['Type', 'Strain', 'Effects', 'Flavor'])
+y_2=cannabis_2['Type']
+
+X_3=cannabis_3.drop(columns=['Type', 'Strain', 'Effects', 'Flavor'])
+y_3=cannabis_3['Type']
+```
+
+#### SVC Models: 
+```{python}
+svc_pipeline.fit(X_1, y_1)
+svc_pipeline.fit(X_2, y_2)
+svc_pipeline.fit(X_3, y_3)
+```
+
+```{python}
+scores_svc_1 = cross_val_score(svc_pipeline, X_1, y_1, cv=5, scoring='accuracy')
+print(scores_svc_1.mean())
+
+scores_svc_2 = cross_val_score(svc_pipeline, X_2, y_2, cv=5, scoring='accuracy')
+print(scores_svc_2.mean())
+
+scores_svc_3 = cross_val_score(svc_pipeline, X_3, y_3, cv=5, scoring='accuracy')
+print(scores_svc_3.mean())
+```
+
+#### Logistic Regression Models: 
+```{python}
+logistic_pipeline.fit(X_1, y_1)
+logistic_pipeline.fit(X_2, y_2)
+logistic_pipeline.fit(X_3, y_3)
+```
+
+```{python}
+scores_log_1 = cross_val_score(logistic_pipeline, X_1, y_1, cv=5, scoring='accuracy')
+print(scores_log_1.mean())
+
+scores_log_2 = cross_val_score(logistic_pipeline, X_2, y_2, cv=5, scoring='accuracy')
+print(scores_log_2.mean())
+
+scores_log_3 = cross_val_score(logistic_pipeline, X_3, y_3, cv=5, scoring='accuracy')
+print(scores_log_3.mean())
+```
+
+### Q4: 
+Overall, the scores between the SVC and Logistic Regression models were very similar. The model that performed the best was the Logistic Regression model on indica vs. sativa, and the model that performed the worst was the Logistic Regression model on hybrid vs. sativa (but this wasn't much worse than the indica vs. hybrid model). This makes inherent sense because the hybrid strains were harder to distinguish from the other two categories, and when they are removed from classification the model can predict better. We saw this before in the first part of the lab, and these models provided the same/similar scores to our initial investigation between sativa and indica categories. Additionally, it makes sense that sativa and hybrid are the most difficult categories to distinguish between, as in our previous decision tree sativa wasn't even an option/its own unique category when in the model with all categories. 
+
+### Q5: 
+Logistic regression would automatically take an "OVR" approach, and SVC would automatically take a "OVO" approach. 
+
